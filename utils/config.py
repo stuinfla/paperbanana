@@ -41,8 +41,9 @@ class ExpConfig:
     timestamp: str | None = None
 
     def __post_init__(self):
-        os.environ["TZ"] = "America/Los_Angeles" # set the timezone as you like
-        time.tzset()  # Only needed once after setting TZ
+        os.environ["TZ"] = "America/Los_Angeles"  # set the timezone as you like
+        if hasattr(time, "tzset"):
+            time.tzset()  # Only available on Unix; no-op guard for Windows
         
         # Fallback to yaml config if no model_name provided
         if not self.model_name or not self.image_model_name:
