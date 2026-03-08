@@ -167,8 +167,11 @@ class VisualizerAgent(BaseAgent):
                     aspect_ratio = data["additional_info"]["rounded_ratio"]
 
                 gen_config_args["response_modalities"] = ["IMAGE"]
-                # Note: ImageConfig was removed in newer google-genai versions.
-                # Aspect ratio and size are handled via the prompt and model defaults.
+                # Request highest resolution available (4K for gemini-3-pro-image-preview)
+                gen_config_args["image_config"] = types.ImageConfig(
+                    image_size="4K",
+                    aspect_ratio=aspect_ratio,
+                )
 
             # Generate multiple candidates in parallel for diagram tasks
             if cfg["use_image_generation"] and num_candidates > 1:
