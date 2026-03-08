@@ -3,39 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PaperBanana SVG — Storytelling Diagrams Showcase</title>
+<title>PaperBanana SVG — Explanatory Diagrams</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: system-ui, -apple-system, sans-serif; background: #0a0f1e; color: #e2e8f0; }
 
-  /* Hero */
   .hero { padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid #1e293b; }
   .hero h1 { font-size: 2.2rem; color: #f8fafc; margin-bottom: 0.5rem; }
   .hero h1 span { color: #F59E0B; }
-  .hero .tagline { color: #94a3b8; font-size: 1.1rem; max-width: 700px; margin: 0 auto 1.5rem; line-height: 1.5; }
+  .hero .tagline { color: #94a3b8; font-size: 1.05rem; max-width: 750px; margin: 0 auto 1.5rem; line-height: 1.6; }
   .hero .stats { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
   .stat { text-align: center; }
   .stat .num { font-size: 1.8rem; font-weight: 700; color: #F59E0B; }
   .stat .label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; }
 
-  /* Nav */
   nav { position: sticky; top: 0; z-index: 50; background: #0a0f1eee; backdrop-filter: blur(8px); padding: 0.75rem 2rem; border-bottom: 1px solid #1e293b; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
   nav a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
   nav a:hover { color: #F59E0B; }
 
-  /* Section */
   .section { padding: 2.5rem 2rem; border-bottom: 1px solid #1e293b; max-width: 1400px; margin: 0 auto; }
-  .section h2 { font-size: 1.6rem; color: #f8fafc; margin-bottom: 0.25rem; }
-  .section h2 span { color: #F59E0B; font-size: 1rem; font-weight: 400; }
+  .section h2 { font-size: 1.5rem; color: #f8fafc; margin-bottom: 0.25rem; }
   .section .desc { color: #94a3b8; font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.5; }
 
-  /* Grid */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 1.5rem; }
-  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
 
-  /* Card */
   .card { background: #111827; border-radius: 12px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
-  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(245,158,11,0.1); }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(245,158,11,0.08); }
   .card img { width: 100%; height: auto; display: block; }
   .card .info { padding: 1rem 1.25rem; }
   .card .info h3 { font-size: 1rem; font-weight: 600; color: #f1f5f9; margin-bottom: 0.25rem; }
@@ -44,20 +37,17 @@
   .card .info .links a { color: #818cf8; font-size: 0.8rem; text-decoration: none; }
   .card .info .links a:hover { text-decoration: underline; }
 
-  /* About */
   .about { max-width: 800px; margin: 0 auto; }
   .about p { color: #94a3b8; line-height: 1.7; margin-bottom: 1rem; }
   .about strong { color: #f1f5f9; }
   .about code { background: #1e293b; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85em; color: #F59E0B; }
 
-  /* Lightbox */
   .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; align-items: center; justify-content: center; padding: 2rem; }
   .lightbox.active { display: flex; flex-direction: column; }
   .lightbox img { max-width: 95vw; max-height: 85vh; border-radius: 8px; object-fit: contain; }
   .lightbox .close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2rem; color: white; cursor: pointer; background: none; border: none; }
   .lightbox .caption { margin-top: 1rem; color: #e2e8f0; font-size: 1rem; text-align: center; background: rgba(0,0,0,0.6); padding: 0.5rem 1.5rem; border-radius: 8px; }
 
-  /* Footer */
   footer { padding: 2rem; text-align: center; color: #475569; font-size: 0.85rem; }
   footer a { color: #818cf8; text-decoration: none; }
 </style>
@@ -66,57 +56,33 @@
 
 <div class="hero">
   <h1>Paper<span>Banana</span> SVG</h1>
-  <p class="tagline">Storytelling-enhanced diagrams that communicate complex concepts instantly. SVG output with 100% text accuracy, generated in seconds.</p>
+  <p class="tagline">Explanatory diagrams that teach complex concepts in 15 seconds. SVG code generation with 100% text accuracy, rendered by Cairo. Every element has a label AND a description — because a diagram that doesn't explain is just decoration.</p>
   <div class="stats">
     <div class="stat"><div class="num">100%</div><div class="label">Text Accuracy</div></div>
     <div class="stat"><div class="num">&lt;30s</div><div class="label">Per Diagram</div></div>
-    <div class="stat"><div class="num">SVG</div><div class="label">Editable Output</div></div>
-    <div class="stat"><div class="num">7</div><div class="label">Diagrams</div></div>
+    <div class="stat"><div class="num">SVG</div><div class="label">Editable Vector</div></div>
+    <div class="stat"><div class="num">3</div><div class="label">Projects</div></div>
   </div>
 </div>
 
 <nav>
-  <a href="#pi">Pi (4 images)</a>
-  <a href="#ruvector">RuVector (2 images)</a>
-  <a href="#ruview">RuView (1 image)</a>
-  <a href="#about">About the Tool</a>
+  <a href="#pi">Pi</a>
+  <a href="#ruvector">RuVector</a>
+  <a href="#ruview">RuView</a>
+  <a href="#about">About</a>
 </nav>
 
 <!-- PI -->
 <div class="section" id="pi">
-  <h2>Pi — Collective Intelligence Platform <span>(4 images)</span></h2>
-  <p class="desc">A shared AI brain where agents contribute knowledge, vote on quality, and learn through federated consensus. "Not stored. Alive."</p>
+  <h2>Pi — Collective Intelligence Platform</h2>
+  <p class="desc">A shared AI brain where agents contribute knowledge, vote on quality, and learn through federated consensus. Five mathematical pillars: Identity, Contribution, Collective, Graph, Transfer.</p>
   <div class="grid">
     <div class="card" onclick="openLightbox(this)">
-      <img src="pi/01_overview.png" alt="Pi Overview">
+      <img src="pi/01_five_pillars.png" alt="Pi Five Pillars">
       <div class="info">
-        <h3>System Overview</h3>
-        <p>The solar system metaphor — verified truth at the core, mathematical pillars in orbit, agent teams contributing through consensus, security layers and edge network as concentric rings.</p>
-        <div class="links"><a href="svg/pi_01_overview.svg" download>Download SVG</a> <a href="pi/01_overview.png" download>Download PNG</a></div>
-      </div>
-    </div>
-    <div class="card" onclick="openLightbox(this)">
-      <img src="pi/02_five_pillars.png" alt="Five Pillars">
-      <div class="info">
-        <h3>The Five Pillars (π → Σ → ∞ → ∇ → Δ)</h3>
-        <p>The mathematical foundation: Identity → Contribution → Collective → Graph → Transfer. A journey from individual agent to collective intelligence.</p>
-        <div class="links"><a href="svg/pi_02_five_pillars.svg" download>Download SVG</a> <a href="pi/02_five_pillars.png" download>Download PNG</a></div>
-      </div>
-    </div>
-    <div class="card" onclick="openLightbox(this)">
-      <img src="pi/03_consensus.png" alt="Consensus Protocol">
-      <div class="info">
-        <h3>Consensus Protocol</h3>
-        <p>Intellectual combat that produces truth — agents propose, challenge, refine, and converge. Like automated peer review running continuously.</p>
-        <div class="links"><a href="svg/pi_03_consensus.svg" download>Download SVG</a> <a href="pi/03_consensus.png" download>Download PNG</a></div>
-      </div>
-    </div>
-    <div class="card" onclick="openLightbox(this)">
-      <img src="pi/04_identity.png" alt="Identity Layer">
-      <div class="info">
-        <h3>Identity Layer — Agent Specialists</h3>
-        <p>Each agent has a unique identity with trust scores, expertise domains, and specialization profiles. Not interchangeable — each brings distinct capabilities.</p>
-        <div class="links"><a href="svg/pi_04_identity.svg" download>Download SVG</a> <a href="pi/04_identity.png" download>Download PNG</a></div>
+        <h3>The Five Pillars</h3>
+        <p>Each pillar explained with its function: Identity (unique agent profiles), Contribution (weighted knowledge input), Collective (living consensus pool), Graph (semantic relationships), Transfer (cross-domain learning). Shows the consensus cycle: Challenge, Refine, Synthesize.</p>
+        <div class="links"><a href="svg/pi_five_pillars.svg" download>Download SVG</a> <a href="pi/01_five_pillars.png" download>Download PNG</a></div>
       </div>
     </div>
   </div>
@@ -124,23 +90,15 @@
 
 <!-- RUVECTOR -->
 <div class="section" id="ruvector">
-  <h2>RuVector — Vector Database Engine <span>(2 images)</span></h2>
-  <p class="desc">One engine, six impossible applications. Billions of vectors, sub-millisecond latency.</p>
+  <h2>RuVector — Universal Vector Database Engine</h2>
+  <p class="desc">One engine, six applications. Semantic search, recommendations, anomaly detection, knowledge graphs, RAG pipelines, personalization — all from a single HNSW-indexed core.</p>
   <div class="grid">
     <div class="card" onclick="openLightbox(this)">
-      <img src="ruvector/01_apps_ecosystem.png" alt="RuVector Apps">
+      <img src="ruvector/01_overview.png" alt="RuVector Overview">
       <div class="info">
-        <h3>Application Ecosystem</h3>
-        <p>One hexagonal core powering 6 applications: Semantic Search, Recommendations, Anomaly Detection, Knowledge Graphs, RAG Pipelines, Personalization. Unified API, HNSW indexing.</p>
-        <div class="links"><a href="svg/ruvector_apps.svg" download>Download SVG</a> <a href="ruvector/01_apps_ecosystem.png" download>Download PNG</a></div>
-      </div>
-    </div>
-    <div class="card" onclick="openLightbox(this)">
-      <img src="ruvector/02_overview.png" alt="RuVector Overview">
-      <div class="info">
-        <h3>Product Overview</h3>
-        <p>What is a vector database? The librarian who doesn't just know where every book is — but understands what every book is ABOUT.</p>
-        <div class="links"><a href="svg/ruvector_overview.svg" download>Download SVG</a> <a href="ruvector/02_overview.png" download>Download PNG</a></div>
+        <h3>Architecture Overview</h3>
+        <p>Central core engine (HNSW Indexing, Billion-Scale Storage, Sub-millisecond Execution) wrapped in a Unified API Layer, powering 6 distinct application types. Each application labeled with what it does. Core insight: "Think of RuVector as a semantic librarian."</p>
+        <div class="links"><a href="svg/ruvector_overview.svg" download>Download SVG</a> <a href="ruvector/01_overview.png" download>Download PNG</a></div>
       </div>
     </div>
   </div>
@@ -148,14 +106,14 @@
 
 <!-- RUVIEW -->
 <div class="section" id="ruview">
-  <h2>RuView — WiFi DensePose <span>(1 image)</span></h2>
-  <p class="desc">See through walls. No cameras needed.</p>
+  <h2>RuView — WiFi DensePose</h2>
+  <p class="desc">See through walls. No cameras needed. WiFi signals bounce off human bodies, and a DensePose neural network reconstructs 3D poses in real-time.</p>
   <div class="grid">
     <div class="card" onclick="openLightbox(this)">
       <img src="ruview/01_wifi_densepose.png" alt="RuView WiFi">
       <div class="info">
-        <h3>WiFi Pose Detection</h3>
-        <p>WiFi signals pass through walls, bounce off human bodies, and a DensePose neural network reconstructs 3D body poses. Works in darkness, preserves privacy — no cameras ever.</p>
+        <h3>WiFi Pose Detection Pipeline</h3>
+        <p>Complete 7-step pipeline: WiFi TX emits signals, waves propagate through walls, bounce off human body, captured by RX antenna array, CSI extraction isolates amplitude/phase data, DensePose neural network reconstructs body surface, outputs 3D pose with joint positions.</p>
         <div class="links"><a href="svg/ruview_wifi.svg" download>Download SVG</a> <a href="ruview/01_wifi_densepose.png" download>Download PNG</a></div>
       </div>
     </div>
@@ -166,24 +124,24 @@
 <div class="section" id="about">
   <h2>About PaperBanana SVG</h2>
   <div class="about">
-    <p><strong>PaperBanana</strong> is a multi-agent framework for generating publication-quality diagrams from text descriptions. Originally developed by Peking University and Google Cloud AI Research for academic paper figures, this fork adds a <strong>storytelling-enhanced SVG pipeline</strong> that produces vector diagrams with 100% text accuracy.</p>
-    <p><strong>How it works:</strong> A Planner agent finds a visual metaphor ("What is this LIKE?"), a Stylist agent applies NeurIPS-level aesthetic guidelines, and an SVG Visualizer generates clean vector code rendered by Cairo. A Critic agent can evaluate the rendered output and trigger code fixes.</p>
-    <p><strong>Key advantages over raster image generation:</strong></p>
-    <p>• <strong>100% text accuracy</strong> — text is rendered by Cairo, not predicted by a neural net<br>
-    • <strong>Infinitely scalable</strong> — vector output works at any resolution<br>
-    • <strong>Fully editable</strong> — output is SVG code, version-controllable and diffable<br>
-    • <strong>10x faster</strong> — ~30 seconds per diagram vs 3-5 minutes for raster<br>
-    • <strong>20x cheaper</strong> — ~$0.05 per diagram vs $0.50-2.00 for multi-agent raster</p>
-    <p>Models: <code>gemini-3.1-pro-preview</code> (planning/styling/SVG generation) + <code>cairosvg</code> (rendering)</p>
+    <p><strong>PaperBanana</strong> is a multi-agent framework for generating publication-quality diagrams. This fork adds a <strong>storytelling-enhanced SVG pipeline</strong> that produces explanatory vector diagrams with 100% text accuracy.</p>
+    <p><strong>How it works:</strong> A Planner agent discovers a visual metaphor ("What is this LIKE?"), a Stylist agent applies NeurIPS-level aesthetic guidelines, an SVG Visualizer generates clean vector code, Cairo renders it to PNG, and a Vision Critic evaluates the rendered output — sending specific spatial fixes back to the SVG code for self-correction.</p>
+    <p><strong>Key advantages:</strong></p>
+    <p>- <strong>100% text accuracy</strong> — text rendered by Cairo, not predicted by a neural net<br>
+    - <strong>Explanatory, not decorative</strong> — every element has a label AND description<br>
+    - <strong>Self-correcting</strong> — vision critic sees rendered PNG and fixes layout bugs<br>
+    - <strong>Infinitely scalable</strong> — vector SVG output at any resolution<br>
+    - <strong>Fully editable</strong> — output is SVG code, version-controllable<br>
+    - <strong>10x faster, 20x cheaper</strong> than raster image generation</p>
+    <p>Models: <code>gemini-3.1-pro-preview</code> (planning/SVG generation/critique) + <code>cairosvg</code> (rendering)</p>
     <p>GitHub: <a href="https://github.com/stuinfla/paperbanana" style="color:#818cf8">stuinfla/paperbanana</a></p>
   </div>
 </div>
 
 <footer>
-  Generated by <a href="https://github.com/stuinfla/paperbanana">PaperBanana SVG</a> — Storytelling-enhanced academic diagrams
+  Generated by <a href="https://github.com/stuinfla/paperbanana">PaperBanana SVG</a> — Explanatory diagrams that teach
 </footer>
 
-<!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <button class="close" onclick="closeLightbox(event)">&times;</button>
   <img id="lb-img" src="" alt="">
@@ -196,7 +154,7 @@ function openLightbox(card) {
   const h3 = card.querySelector('h3');
   const p = card.querySelector('p');
   document.getElementById('lb-img').src = img.src;
-  document.getElementById('lb-caption').textContent = (h3?.textContent || '') + ' — ' + (p?.textContent || '').slice(0, 120);
+  document.getElementById('lb-caption').textContent = (h3?.textContent || '') + ' — ' + (p?.textContent || '').slice(0, 150);
   document.getElementById('lightbox').classList.add('active');
 }
 function closeLightbox(e) {

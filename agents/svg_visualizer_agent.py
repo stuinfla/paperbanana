@@ -120,10 +120,11 @@ class SVGVisualizerAgent(BaseAgent):
 
     async def process(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate SVG from the styled description.
-        Stores both SVG code and rendered PNG (base64 JPEG) in data.
+        Generate SVG from the styled description, then run vision-based critic loop.
+        The critic SEES the rendered PNG and provides specific spatial/design fixes
+        that get applied surgically to the SVG code.
         """
-        task_name = "diagram"  # SVG visualizer only handles diagrams
+        task_name = "diagram"
 
         # Find the best available description (prefer stylist, fall back to planner)
         desc_key = None
@@ -147,7 +148,7 @@ class SVGVisualizerAgent(BaseAgent):
         # Get visual intent for additional context
         visual_intent = data.get('visual_intent', '')
 
-        # Generate SVG
+        # Generate initial SVG
         prompt = SVG_GENERATION_PROMPT.format(
             description=clean_desc,
             visual_intent=visual_intent,
@@ -160,7 +161,7 @@ class SVGVisualizerAgent(BaseAgent):
             contents=content_list,
             config=types.GenerateContentConfig(
                 system_instruction=self.system_prompt,
-                temperature=0.7,  # Lower temp for code generation
+                temperature=0.7,
                 candidate_count=1,
                 max_output_tokens=50000,
             ),
@@ -182,8 +183,85 @@ class SVGVisualizerAgent(BaseAgent):
             print(f"[SVG Visualizer] Generated and rendered SVG for {desc_key}")
         else:
             print(f"[SVG Visualizer] Generated SVG but could not render to PNG")
+            return data
+
+        # === VISION-BASED CRITIC LOOP ===
+        # The critic SEES the rendered PNG and provides specific fixes
+        max_critic_rounds = getattr(self.exp_config, 'max_critic_rounds', self.max_fix_iterations)
+        if max_critic_rounds <= 0:
+            return data
+
+        svg_key = f"{desc_key}_svg_code"
+        img_key = f"{desc_key}_base64_jpg"
+
+        for round_idx in range(max_critic_rounds):
+            current_rendered = data.get(img_key)
+            if not current_rendered or len(current_rendered) < 100:
+                break
+
+            # Send rendered PNG to vision critic
+            print(f"[SVG Visualizer] Vision critic round {round_idx + 1}/{max_critic_rounds}...")
+            critique = await self._vision_critique(current_rendered, clean_desc, visual_intent)
+
+            if not critique:
+                print(f"[SVG Visualizer] Critic returned no feedback, stopping.")
+                break
+
+            # Check if critic says it's good enough
+            if "NO_CHANGES_NEEDED" in critique:
+                print(f"[SVG Visualizer] Critic approved diagram (round {round_idx + 1}).")
+                break
+
+            print(f"[SVG Visualizer] Critic feedback: {critique[:200]}...")
+
+            # Apply fixes to SVG
+            data = await self.fix_svg(data, critique, svg_key)
+            print(f"[SVG Visualizer] Applied fixes, round {round_idx + 1} complete.")
 
         return data
+
+    async def _vision_critique(self, rendered_base64: str, description: str, visual_intent: str) -> Optional[str]:
+        """
+        Send the rendered PNG to a multimodal model for visual critique.
+        Returns specific, actionable fix instructions or 'NO_CHANGES_NEEDED'.
+        """
+        critique_prompt = VISION_CRITIC_PROMPT.format(
+            description=description,
+            visual_intent=visual_intent,
+        )
+
+        content_list = [
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/jpeg",
+                    "data": rendered_base64,
+                },
+            },
+            {"type": "text", "text": critique_prompt},
+        ]
+
+        try:
+            response_list = await generation_utils.call_gemini_with_retry_async(
+                model_name=self.model_name,
+                contents=content_list,
+                config=types.GenerateContentConfig(
+                    system_instruction="You are an expert visual design critic. You evaluate rendered SVG diagrams for quality issues.",
+                    temperature=0.3,
+                    candidate_count=1,
+                    max_output_tokens=4000,
+                ),
+                max_attempts=2,
+                retry_delay=5,
+            )
+
+            if response_list and response_list[0] != "Error":
+                return response_list[0]
+        except Exception as e:
+            print(f"[SVG Visualizer] Vision critique failed: {e}")
+
+        return None
 
     async def fix_svg(self, data: Dict[str, Any], critique: str, svg_key: str) -> Dict[str, Any]:
         """
@@ -231,55 +309,91 @@ class SVGVisualizerAgent(BaseAgent):
 # PROMPTS
 # ============================================================================
 
-SVG_VISUALIZER_SYSTEM_PROMPT = """You are an expert SVG diagram designer who creates publication-quality technical diagrams.
+SVG_VISUALIZER_SYSTEM_PROMPT = """You are an expert SVG diagram designer who creates publication-quality EXPLANATORY technical diagrams.
 
-You generate clean, well-structured SVG code that renders as compelling visual explanations.
+Your diagrams EXPLAIN complex concepts. They are NOT abstract art. They are NOT decorative illustrations.
+A good diagram is like a great teacher: it uses visuals AND words together to make someone understand something in 15 seconds that would take 5 minutes to read.
 
 MANDATORY RULES:
-1. Output ONLY valid SVG code wrapped in ```svg code blocks. No explanation text.
-2. All text MUST be perfectly spelled and legible. Use font-size 12-28px. Never smaller than 11px.
+1. Output ONLY valid SVG code wrapped in ```svg code blocks. No explanation text outside the SVG.
+2. All text MUST be perfectly spelled and legible. Use font-size 13-28px. Never smaller than 12px.
 3. Use system-ui, -apple-system, sans-serif as the font family.
 4. Canvas size: viewBox="0 0 1200 800", width="1200", height="800".
 5. Use a cohesive color palette of 3-5 colors. Define gradients in <defs>.
 6. The most important concept must be the largest, most visually prominent element.
 7. Generous whitespace between elements. Never crowd the canvas.
-8. Maximum 15 distinct visual elements. Simplicity > complexity.
+8. Maximum 20 distinct visual elements. Clarity > simplicity > complexity.
 9. Use rounded rectangles (rx="8-12"), clean lines, subtle drop shadows.
-10. NO figure titles or captions — the diagram speaks for itself.
+10. NO figure title/caption at the top — but EVERY element must have explanatory text.
+
+INFORMATION DENSITY — THIS IS CRITICAL:
+- Every visual element MUST have a label AND a short description (1 line, 5-15 words)
+- Labels alone are NOT enough. "Identity" means nothing. "Identity: Each agent has a unique profile with trust scores and expertise domains" — THAT explains.
+- Use 2-level text: bold/large label (16-22px) + smaller explanation underneath (13-15px, lighter color)
+- Arrows and connections MUST be labeled to show what flows between elements
+- Include a 1-2 sentence summary text block that states the core insight
+- If someone sees this diagram and doesn't understand the concept better, the diagram FAILED
 
 DESIGN PHILOSOPHY:
-- The diagram must tell a STORY, not list components
-- Use spatial relationships to show how concepts connect
-- The viewer should understand the core idea in 5 seconds
+- The diagram must TEACH, not just illustrate
+- Use spatial relationships AND text together — neither alone is sufficient
+- The viewer should understand the core concept AND its key details in 15 seconds
 - Use color FUNCTIONALLY (to encode meaning), not decoratively
-- Whitespace is a structural element, not wasted space
+- Shapes should represent real concepts (containers, flows, layers), not abstract decoration
+- Think: "Would this work as a slide in a presentation to someone who knows nothing about this topic?"
 
 SVG TECHNIQUES TO USE:
 - <defs> for reusable gradients, filters, markers
 - <g> groups for logical element grouping with transform
 - <filter> for subtle drop shadows (feDropShadow)
-- Curved <path> elements for organic flow connections
-- <text> with proper anchoring and font styling
-- Subtle opacity variations to create depth
+- Clean arrows with <marker> for directional flow
+- <text> with proper anchoring — use separate <text> elements for each line
+- Rounded <rect> containers to group related concepts
+- Subtle opacity variations to create visual hierarchy (primary=1.0, secondary=0.85, tertiary=0.7)
+
+CAIRO RENDERING RULES (MUST FOLLOW — these cause real visual bugs):
+- NEVER use <tspan> with different fill/color on the same <text> line — Cairo renders them overlapping. Use SEPARATE <text> elements with different y positions instead.
+- NEVER use emoji characters (💡🔥⚡ etc.) — Cairo renders them as empty squares. Use SVG shapes instead.
+- NEVER use unicode arrows (→ ← ↑ ↓) in text — they render as squares. Use SVG <path> or <line> with <marker> arrowheads.
+- Keep 20px minimum vertical spacing between text lines to prevent overlap.
+- Place arrow labels in clear space — never behind or overlapping with boxes.
 """
 
-SVG_GENERATION_PROMPT = """Create an SVG diagram based on this description:
+SVG_GENERATION_PROMPT = """Create an EXPLANATORY SVG diagram based on this description:
 
 {description}
 
 Visual intent: {visual_intent}
 
-Generate a complete, valid SVG that visualizes this concept as a compelling diagram.
-The diagram should make someone instantly understand the concept — not through labels and boxes,
-but through a visual metaphor that clicks.
+CRITICAL REQUIREMENTS — READ CAREFULLY:
+This diagram must EXPLAIN the concept, not just illustrate it. Someone with zero context should look at this and understand:
+1. What this system/concept IS (core purpose in 1 sentence)
+2. What the key components ARE and what each one DOES (not just names — functions)
+3. How the components RELATE to each other (flows, dependencies, layers)
 
-Remember:
+EVERY element must have:
+- A bold label (16-22px, white/bright)
+- A 1-line description underneath (13-15px, lighter gray like #94a3b8) explaining what it does
+- Example: Don't just write "Consensus" — write "Consensus" with "Agents debate, vote, and converge on verified truth" below it
+
+LAYOUT:
 - viewBox="0 0 1200 800"
-- Dark background (#0B1426 or similar deep navy) with light text
+- Dark background (#0B1426 or similar deep navy) with light text (#e2e8f0)
 - Warm accent colors (amber #F59E0B, orange #F97316) for primary elements
-- Cool colors (blue #3B82F6, purple #6366F1) for secondary elements
-- Maximum 15 elements
-- Text must be crisp and correctly spelled
+- Cool colors (blue #3B82F6, indigo #6366F1) for secondary elements
+- Gray (#64748b) for tertiary/supporting text
+- Use rounded rectangles as containers with subtle borders
+- Clean arrows between components showing data/control flow
+- Label the arrows too (e.g., "knowledge flows", "trust scores", "CSI data")
+- Include a prominent 1-2 sentence "core insight" text block somewhere on the canvas
+
+ANTI-PATTERNS — DO NOT DO THESE:
+- Do NOT create abstract shapes without explanatory text
+- Do NOT use single-word labels without descriptions
+- Do NOT make "artistic" diagrams that look pretty but explain nothing
+- Do NOT overlap text with other elements
+- Do NOT use font sizes below 12px
+- Do NOT create purely decorative elements that don't represent real concepts
 
 Output ONLY the SVG code in a ```svg code block."""
 
@@ -294,4 +408,37 @@ CURRENT SVG:
 ```
 
 Apply the requested changes. Maintain the overall design and color palette.
+
+IMPORTANT CAIRO RENDERING RULES (these cause real bugs if ignored):
+- Do NOT use <tspan> with different fill colors on the same <text> line — Cairo renders them overlapping. Use separate <text> elements instead.
+- Do NOT use emoji characters — Cairo renders them as empty squares. Use SVG shapes (circles, icons) instead.
+- Do NOT use unicode arrows (→, ←) in text — use SVG <path> or <line> with markers instead.
+- Keep all text elements well-separated — at least 20px vertical spacing between text lines.
+- Arrow labels should never overlap with boxes or other text. Place them in clear space.
+
 Output ONLY the fixed SVG code in a ```svg code block."""
+
+VISION_CRITIC_PROMPT = """Look at this rendered SVG diagram carefully. The diagram was supposed to explain:
+
+CONCEPT: {description}
+
+INTENT: {visual_intent}
+
+Evaluate the RENDERED image (not the code) for these specific issues:
+
+1. TEXT PROBLEMS: Is any text overlapping, clipped, cut off, or unreadable? Are there empty squares (failed emoji/unicode rendering)? Is any text too small to read?
+
+2. LAYOUT PROBLEMS: Are elements crowded or overlapping? Is there wasted whitespace? Are arrows pointing to the wrong places? Are labels misaligned with their elements?
+
+3. INFORMATION GAPS: Does every element have both a label AND a description? Are arrow connections labeled? Is there a core insight summary? Would someone unfamiliar with the topic understand this in 15 seconds?
+
+4. DESIGN ISSUES: Is the visual hierarchy clear (most important = largest/boldest)? Is the color scheme consistent? Do the visual containers make logical sense?
+
+If the diagram scores 95/100 or higher with NO text rendering issues, respond with exactly: NO_CHANGES_NEEDED
+
+Otherwise, provide SPECIFIC, ACTIONABLE fixes. For each issue:
+- Describe exactly WHAT is wrong (e.g., "The text 'raw knowledge' at the bottom-left is partially hidden behind the Collective box")
+- Describe exactly HOW to fix it (e.g., "Move the 'raw knowledge' label 30px higher so it sits above the arrow, not behind the box")
+- Be spatial and precise — reference positions (top-left, center, bottom-right), approximate coordinates, and specific text strings
+
+Do NOT provide vague feedback like "improve the layout." Every fix must be specific enough to translate directly into SVG coordinate changes."""

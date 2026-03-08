@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <!-- Arrowhead Markers -->
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3B82F6"/>
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B5CF6"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10B981"/>
+    </marker>
+    
+    <!-- Drop Shadow Filter -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="#0B1426"/>
+
+  <!-- ========================================== -->
+  <!-- HEADER & CORE INSIGHT                      -->
+  <!-- ========================================== -->
+  <rect x="50" y="40" width="1100" height="80" rx="12" fill="#1E293B" stroke="#334155" stroke-width="2" filter="url(#shadow)"/>
+  <text x="80" y="72" font-family="system-ui, sans-serif" font-size="18" font-weight="bold" fill="#F59E0B">CORE INSIGHT:</text>
+  <text x="225" y="72" font-family="system-ui, sans-serif" font-size="18" font-weight="600" fill="#F8FAFC">RuView uses standard WiFi signals to detect human poses without cameras.</text>
+  <text x="80" y="98" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">By analyzing how radio waves bounce off bodies and travel through walls, deep learning models reconstruct accurate 3D skeletons.</text>
+
+  <!-- Advantages Bar -->
+  <rect x="50" y="135" width="1100" height="50" rx="12" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+  
+  <circle cx="120" cy="160" r="5" fill="#10B981"/>
+  <text x="135" y="165" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" fill="#CBD5E1">Privacy-Preserving</text>
+  <text x="280" y="165" font-family="system-ui, sans-serif" font-size="14" fill="#64748B">(No cameras used)</text>
+
+  <circle cx="410" cy="160" r="5" fill="#10B981"/>
+  <text x="425" y="165" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" fill="#CBD5E1">Through-Wall</text>
+  <text x="530" y="165" font-family="system-ui, sans-serif" font-size="14" fill="#64748B">(Penetrates obstacles)</text>
+
+  <circle cx="680" cy="160" r="5" fill="#10B981"/>
+  <text x="695" y="165" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" fill="#CBD5E1">Zero-Light</text>
+  <text x="780" y="165" font-family="system-ui, sans-serif" font-size="14" fill="#64748B">(Works in darkness)</text>
+
+  <circle cx="920" cy="160" r="5" fill="#10B981"/>
+  <text x="935" y="165" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" fill="#CBD5E1">Standard Tech</text>
+  <text x="1045" y="165" font-family="system-ui, sans-serif" font-size="14" fill="#64748B">(Existing routers)</text>
+
+  <!-- ========================================== -->
+  <!-- ARROWS & FLOW CONNECTIONS                  -->
+  <!-- ========================================== -->
+  
+  <!-- Row 1: Physical Flow (Blue) -->
+  <!-- TX to Wall -->
+  <path d="M 260 340 L 315 340" stroke="#3B82F6" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+  <text x="287" y="325" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#93C5FD" text-anchor="middle">2.4/5GHz</text>
+
+  <!-- Wall to Human -->
+  <path d="M 385 340 L 435 340" stroke="#3B82F6" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+  <text x="410" y="325" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#93C5FD" text-anchor="middle">Through-wall</text>
+
+  <!-- Human to RX -->
+  <path d="M 685 340 L 895 340" stroke="#3B82F6" stroke-width="3" fill="none" marker-end="url(#arrow-blue)"/>
+  <text x="790" y="320" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#93C5FD" text-anchor="middle">Reflected signals</text>
+  <text x="790" y="338" font-family="system-ui, sans-serif" font-size="13" fill="#60A5FA" text-anchor="middle">(distorted by pose)</text>
+
+  <!-- RX to CSI (Downwards) -->
+  <path d="M 1030 435 L 1030 545" stroke="#8B5CF6" stroke-width="3" fill="none" marker-end="url(#arrow-purple)"/>
+  <text x="1045" y="495" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#A78BFA" text-anchor="start">Raw RF Data</text>
+
+  <!-- Row 2: Digital Flow (Purple/Green) -->
+  <!-- CSI to DensePose -->
+  <path d="M 895 640 L 765 640" stroke="#8B5CF6" stroke-width="3" fill="none" marker-end="url(#arrow-purple)"/>
+  <text x="830" y="625" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#A78BFA" text-anchor="middle">Amplitude &amp; Phase</text>
+
+  <!-- DensePose to Pose -->
+  <path d="M 435 640 L 305 640" stroke="#10B981" stroke-width="3" fill="none" marker-end="url(#arrow-green)"/>
+  <text x="370" y="625" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#34D399" text-anchor="middle">Body Surface Map</text>
+
+
+  <!-- ========================================== -->
+  <!-- ROW 1: PHYSICAL WORLD (SENSING)            -->
+  <!-- ========================================== -->
+  
+  <!-- 1. WiFi Transmitter (TX) -->
+  <rect x="50" y="260" width="200" height="160" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="2" stroke-opacity="0.6" filter="url(#shadow)"/>
+  <!-- Router Icon -->
+  <g transform="translate(110, 290)">
+    <rect x="0" y="15" width="80" height="20" rx="4" fill="#3B82F6"/>
+    <path d="M 15 15 L 10 -5 M 40 15 L 40 -10 M 65 15 L 70 -5" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="20" cy="25" r="3" fill="#0F172A"/>
+    <circle cx="30" cy="25" r="3" fill="#0F172A"/>
+    <circle cx="40" cy="25" r="3" fill="#10B981"/>
+    <!-- Emitting Waves -->
+    <path d="M 95 0 Q 110 25 95 50 M 110 -10 Q 130 25 110 60" stroke="#60A5FA" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+  <text x="150" y="380" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">1. WiFi Transmitter (TX)</text>
+  <text x="150" y="402" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Standard router emits</text>
+  <text x="150" y="420" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">2.4/5GHz radio waves.</text>
+
+  <!-- 2. The Wall (Obstacle) -->
+  <text x="350" y="215" font-family="system-ui, sans-serif" font-size="15" font-weight="bold" fill="#F8FAFC" text-anchor="middle">2. Propagation</text>
+  <text x="350" y="235" font-family="system-ui, sans-serif" font-size="13" fill="#94A3B8" text-anchor="middle">Waves pass through</text>
+  <text x="350" y="250" font-family="system-ui, sans-serif" font-size="13" fill="#94A3B8" text-anchor="middle">solid obstacles</text>
+  
+  <rect x="330" y="260" width="40" height="160" fill="#334155" stroke="#475569" stroke-width="2" filter="url(#shadow)"/>
+  <!-- Brick lines -->
+  <path d="M 330 280 L 370 280 M 330 300 L 370 300 M 330 320 L 370 320 M 330 340 L 370 340 M 330 360 L 370 360 M 330 380 L 370 380 M 330 400 L 370 400" stroke="#1E293B" stroke-width="2"/>
+  <path d="M 350 260 L 350 280 M 340 280 L 340 300 M 360 300 L 360 320 M 350 320 L 350 340 M 340 340 L 340 360 M 360 360 L 360 380 M 350 380 L 350 400" stroke="#1E293B" stroke-width="2"/>
+  <text x="350" y="340" transform="rotate(-90 350 340)" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#64748B" letter-spacing="3" text-anchor="middle">BRICK WALL</text>
+
+  <!-- 3. Body Reflection -->
+  <rect x="450" y="260" width="220" height="160" rx="12" fill="#1E293B" stroke="#F59E0B" stroke-width="2" stroke-opacity="0.6" filter="url(#shadow)"/>
+  <!-- Human Icon -->
+  <g transform="translate(560, 305)">
+    <circle cx="0" cy="-20" r="12" fill="#F59E0B"/>
+    <path d="M -15 -2 Q 0 -8 15 -2 L 12 35 L -12 35 Z" fill="#F59E0B"/>
+    <path d="M -15 -2 L -25 20 M 15 -2 L 25 10 L 35 -5" stroke="#F59E0B" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M -8 35 L -12 65 M 8 35 L 12 65" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+    <!-- Reflection Waves -->
+    <path d="M 35 15 Q 45 30 35 45 M 45 5 Q 60 30 45 55 M 55 -5 Q 75 30 55 65" stroke="#FCD34D" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <text x="560" y="380" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">3. Body Reflection</text>
+  <text x="560" y="402" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Radio signals bounce off body.</text>
+  <text x="560" y="420" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Each limb reflects differently.</text>
+
+  <!-- 4. WiFi Receiver (RX) -->
+  <rect x="910" y="260" width="240" height="160" rx="12" fill="#1E293B" stroke="#3B82F6" stroke-width="2" stroke-opacity="0.6" filter="url(#shadow)"/>
+  <!-- RX Router Icon -->
+  <g transform="translate(1010, 290)">
+    <rect x="10" y="15" width="80" height="20" rx="4" fill="#3B82F6"/>
+    <path d="M 25 15 L 20 -5 M 50 15 L 50 -10 M 75 15 L 80 -5" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="30" cy="25" r="3" fill="#0F172A"/>
+    <circle cx="40" cy="25" r="3" fill="#0F172A"/>
+    <circle cx="50" cy="25" r="3" fill="#10B981"/>
+    <!-- Receiving Waves -->
+    <path d="M -15 0 Q 0 25 -15 50 M -30 -10 Q -10 25 -30 60" stroke="#60A5FA" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g>
+  <text x="1030" y="380" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">4. WiFi Receiver (RX)</text>
+  <text x="1030" y="402" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Antenna array captures the</text>
+  <text x="1030" y="420" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">complex, distorted reflections.</text>
+
+
+  <!-- ========================================== -->
+  <!-- ROW 2: DIGITAL PIPELINE (PROCESSING)       -->
+  <!-- ========================================== -->
+
+  <!-- 5. CSI Extraction -->
+  <rect x="910" y="560" width="240" height="160" rx="12" fill="#1E293B" stroke="#8B5CF6" stroke-width="2" stroke-opacity="0.6" filter="url(#shadow)"/>
+  <!-- CSI Chart Icon -->
+  <g transform="translate(990, 580)">
+    <path d="M 0 60 L 80 60 M 0 60 L 0 10" stroke="#64748B" stroke-width="2"/>
+    <path d="M 0 35 Q 20 5 40 35 T 80 35" stroke="#3B82F6" stroke-width="3" fill="none"/>
+    <path d="M 0 45 Q 20 65 40 45 T 80 45" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+  </g>
+  <text x="1030" y="680" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">5. CSI Extraction</text>
+  <text x="1030" y="702" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Channel State Information</text>
+  <text x="1030" y="720" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">(amplitude &amp; phase) isolated.</text>
+
+  <!-- 6. DensePose Neural Network -->
+  <rect x="450" y="560" width="300" height="160" rx="12" fill="#1E293B" stroke="#8B5CF6" stroke-width="2" stroke-opacity="0.6" filter="url(#shadow)"/>
+  <!-- NN Icon -->
+  <g transform="translate(560, 580)">
+    <!-- Connections -->
+    <path d="M 10 15 L 40 5 M 10 15 L 40 25 M 10 15 L 40 45 M 10 15 L 40 65" stroke="#4C1D95" stroke-width="1.5"/>
+    <path d="M 10 35 L 40 5 M 10 35 L 40 25 M 10 35 L 40 45 M 10 35 L 40 65" stroke="#4C1D95" stroke-width="1.5"/>
+    <path d="M 10 55 L 40 5 M 10 55 L 40 25 M 10 55 L 40 45 M 10 55 L 40 65" stroke="#4C1D95" stroke-width="1.5"/>
+    <path d="M 40 5 L 70 15 M 40 25 L 70 15 M 40 45 L 70 15 M 40 65 L 70 15" stroke="#4C1D95" stroke-width="1.5"/>
+    <path d="M 40 5 L 70 35 M 40 25 L 70 35 M 40 45 L 70 35 M 40 65 L 70 35" stroke="#4C1D95" stroke-width="1.5"/>
+    <path d="M 40 5 L 70 55 M 40 25 L 70 55 M 40 45 L 70 55 M 40 65 L 70 55" stroke="#4C1D95" stroke-width="1.5"/>
+    
+    <!-- Nodes Layer 1 -->
+    <circle cx="10" cy="15" r="6" fill="#A78BFA"/>
+    <circle cx="10" cy="35" r="6" fill="#A78BFA"/>
+    <circle cx="10" cy="55" r="6" fill="#A78BFA"/>
+    <!-- Nodes Layer 2 -->
+    <circle cx="40" cy="5" r="6" fill="#8B5CF6"/>
+    <circle cx="40" cy="25" r="6" fill="#8B5CF6"/>
+    <circle cx="40" cy="45" r="6" fill="#8B5CF6"/>
+    <circle cx="40" cy="65" r="6" fill="#8B5CF6"/>
+    <!-- Nodes Layer 3 -->
+    <circle cx="70" cy="15" r="6" fill="#A78BFA"/>
+    <circle cx="70" cy="35" r="6" fill="#A78BFA"/>
+    <circle cx="70" cy="55" r="6" fill="#A78BFA"/>
+  </g>
+  <text x="600" y="680" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">6. DensePose Neural Network</text>
+  <text x="600" y="702" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Deep learning model processes CSI data</text>
+  <text x="600" y="720" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">to reconstruct the body surface map.</text>
+
+  <!-- 7. 3D Pose Output -->
+  <rect x="50" y="560" width="240" height="160" rx="12" fill="#1E293B" stroke="#10B981" stroke-width="2" filter="url(#shadow)"/>
+  <!-- Skeleton Icon -->
+  <g transform="translate(170, 580)" filter="url(#glow)">
+    <!-- Head -->
+    <circle cx="0" cy="0" r="8" stroke="#10B981" stroke-width="3" fill="none"/>
+    <!-- Spine -->
+    <path d="M 0 8 L 0 35" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+    <!-- Shoulders -->
+    <path d="M -15 15 L 15 15" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+    <!-- Arms -->
+    <path d="M -15 15 L -25 30 L -15 45" stroke="#10B981" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M 15 15 L 25 25 L 10 40" stroke="#10B981" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Hips -->
+    <path d="M -10 35 L 10 35" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+    <!-- Legs -->
+    <path d="M -10 35 L -15 55 L -10 75" stroke="#10B981" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M 10 35 L 15 55 L 10 75" stroke="#10B981" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    
+    <!-- Joints (White Dots) -->
+    <circle cx="0" cy="8" r="2.5" fill="#FFF"/>
+    <circle cx="-15" cy="15" r="2.5" fill="#FFF"/>
+    <circle cx="15" cy="15" r="2.5" fill="#FFF"/>
+    <circle cx="-25" cy="30" r="2.5" fill="#FFF"/>
+    <circle cx="25" cy="25" r="2.5" fill="#FFF"/>
+    <circle cx="-15" cy="45" r="2.5" fill="#FFF"/>
+    <circle cx="10" cy="40" r="2.5" fill="#FFF"/>
+    <circle cx="-10" cy="35" r="2.5" fill="#FFF"/>
+    <circle cx="10" cy="35" r="2.5" fill="#FFF"/>
+    <circle cx="-15" cy="55" r="2.5" fill="#FFF"/>
+    <circle cx="15" cy="55" r="2.5" fill="#FFF"/>
+    <circle cx="-10" cy="75" r="2.5" fill="#FFF"/>
+    <circle cx="10" cy="75" r="2.5" fill="#FFF"/>
+  </g>
+  <text x="170" y="680" font-family="system-ui, sans-serif" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">7. 3D Pose Output</text>
+  <text x="170" y="702" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">Full body pose reconstruction</text>
+  <text x="170" y="720" font-family="system-ui, sans-serif" font-size="14" fill="#94A3B8" text-anchor="middle">with exact 3D joint positions.</text>
+
+</svg>
