@@ -11,100 +11,118 @@
 > Hi everyone! The original version of PaperBanana is already open-sourced under Google-Research as [PaperVizAgent](https://github.com/google-research/papervizagent).
 This repository forked the content of that repo and aims to keep evolving toward better support for academic paper illustration—though we have made solid progress, there is still a long way to go for more reliable generation and for more diverse, complex scenarios. PaperBanana is intended to be a fully open-source project dedicated to facilitating academic illustration for all researchers. Our goal is simply to benefit the community, so we currently have no plans to use it for commercial purposes.
 
----
-
-## What's New: Storytelling-Driven Pipeline (+22 points)
-
-We enhanced all 5 agents to think in **visual metaphors** instead of labeled boxes. The result: diagrams that communicate complex concepts intuitively, scoring **93.5/100** average vs **71.75/100** for the standard approach — a **+22 point improvement** on the same image generation model.
-
-The key insight: the gap between a forgettable diagram and a compelling one isn't rendering quality — it's **what you ask the model to draw**. A shipping container metaphor communicates "modular format" faster than any labeled box diagram. A living library communicates "intelligent search" faster than a flowchart.
-
-### Side-by-Side Results
-
-All comparisons use the **same image generation model** (Gemini). The only difference is the pipeline approach.
-
-#### Scenario 1: Application Ecosystem
-
-| Storytelling (93/100) | Standard (68/100) |
-|:---:|:---:|
-| ![Storytelling](docs/comparison/storytelling_ruvector_apps.png) | ![Standard](docs/comparison/standard_ruvector_apps.png) |
-
-A glowing hexagonal core radiating to 6 distinct mini-scenes. You understand "one engine, six applications" in 2 seconds. The standard version is a cluttered spec sheet.
-
-#### Scenario 2: Product Overview — "Why Should I Care?"
-
-| Storytelling (94/100) | Standard (78/100) |
-|:---:|:---:|
-| ![Storytelling](docs/comparison/storytelling_ruvector_overview.png) | ![Standard](docs/comparison/standard_ruvector_overview.png) |
-
-The "Living Library" metaphor — a warm library with a brain-librarian — instantly communicates "intelligent search that learns." The standard version tells you WHAT it does but not WHY you'd care.
-
-#### Scenario 3: Technical Architecture
-
-| Storytelling (95/100) | Standard (65/100) |
-|:---:|:---:|
-| ![Storytelling](docs/comparison/storytelling_ruview.png) | ![Standard](docs/comparison/standard_ruview.png) |
-
-The biggest gap (+30 points). WiFi waves passing through a person with a DensePose skeleton overlay is immediately intuitive. The standard version makes the invisible... invisible again.
-
-#### Scenario 4: Abstract Concepts
-
-| Storytelling (92/100) | Standard (76/100) |
-|:---:|:---:|
-| ![Storytelling](docs/comparison/storytelling_pi.png) | ![Standard](docs/comparison/standard_pi.png) |
-
-The "Knowledge City" metaphor — glowing buildings as knowledge, named districts — makes abstract concepts tangible. The standard flowchart keeps abstract concepts abstract.
-
-#### Score Summary
-
-| Scenario | Storytelling | Standard | Delta |
-|----------|:-----------:|:--------:|:-----:|
-| Application Ecosystem | **93** | 68 | +25 |
-| Product Overview | **94** | 78 | +16 |
-| Technical Architecture | **95** | 65 | +30 |
-| Abstract Concepts | **92** | 76 | +16 |
-| **Average** | **93.5** | **71.75** | **+21.75** |
-
-### What Changed in Each Agent
-
-**1. Planner Agent — Visual Metaphor Discovery**
-
-Before: "Describe each element and their connections."
-
-After: Three mandatory questions before drawing anything:
-1. **"What is this LIKE?"** — Find a real-world analogy (pipeline = factory, container = shipping crate)
-2. **"What is the ONE key insight?"** — Distill to a sentence a non-expert would understand
-3. **"What should the viewer FEEL?"** — Security? Speed? Elegance? The metaphor evokes this
-
-**2. Stylist Agent — Metaphor Preservation**
-
-New rule: If the Planner chose a visual metaphor, the Stylist MUST preserve and enhance it — never flatten it into generic labeled boxes. Also added rendering artifact removal (strips hex codes, px measurements that leak into images as text).
-
-**3. Visualizer Agent — Multi-Candidate Generation**
-
-Generates N candidates in parallel when `num_candidates > 1`. Tag stripping removes `[PRIMARY]/[SECONDARY]/[TERTIARY]` annotations before sending to the image model. Enhanced 9-rule quality system prompt.
-
-**4. Critic Agent — Visual Excellence Checks**
-
-7 mandatory checks: visual hierarchy, text legibility, color harmony, whitespace balance, flow direction, icon quality, professional polish. Rule: "Never say 'No changes needed' unless genuinely 95/100 quality."
-
-### Quality Progression
-
-| Version | Score | Key Change |
-|---------|:-----:|------------|
-| v1 (vanilla) | 62 | Baseline |
-| v2 (enhanced prompts) | 76 | Better prompts |
-| v3 (tag fix) | 81 | Fixed label leakage |
-| v4 (auto retrieval) | 87 | Reference examples |
-| v5 (enhanced critic) | 86 | Stricter quality checks |
-| **v6 (storytelling)** | **93.5** | **Visual metaphor discovery** |
-
----
-
 **PaperBanana** is a reference-driven multi-agent framework for automated academic illustration generation. Acting like a creative team of specialized agents, it transforms raw scientific content into publication-quality diagrams and plots through an orchestrated pipeline of **Retriever, Planner, Stylist, Visualizer, and Critic** agents. The framework leverages in-context learning from reference examples and iterative refinement to produce aesthetically pleasing and semantically accurate scientific illustrations.
 
 Here are some example diagrams and plots generated by PaperBanana:
 ![Examples](assets/teaser_figure.jpg)
+
+---
+
+## Community Enhancement: Visual Storytelling Pipeline
+
+> **Contributed by** [@stuinfla](https://github.com/stuinfla) — building on the excellent foundation the PaperBanana team created. This enhancement works within the existing 5-agent architecture, improving what each agent does without changing the pipeline structure. All existing functionality (Streamlit demo, batch evaluation, all experiment modes) remains fully backward-compatible.
+
+### The Idea
+
+PaperBanana's pipeline already produces technically accurate diagrams. This enhancement focuses on a complementary dimension: **communication effectiveness**. Instead of changing the rendering or the pipeline structure, we change **how the Planner thinks about what to draw**.
+
+The core change is small but impactful: before describing any boxes or arrows, the Planner now asks three questions:
+
+<div align="center">
+<img src="docs/approach_comparison.svg" alt="Standard vs Storytelling approach comparison" width="700"/>
+</div>
+
+The idea is inspired by how the best academic figures work — they use visual analogies to make abstract concepts concrete. A container format becomes a shipping crate with compartments. A self-learning database becomes a living library. The reviewer "gets it" in seconds instead of minutes.
+
+### Results
+
+We tested across 4 diverse scenarios using the **same image generation model** (Gemini). The only variable is what the pipeline asks the model to draw.
+
+<div align="center">
+<img src="docs/quality_comparison.svg" alt="Quality score comparison chart" width="700"/>
+</div>
+
+| Scenario | With Enhancement | Baseline | Improvement |
+|----------|:---------------:|:--------:|:-----------:|
+| Application ecosystem | **93** | 68 | +25 |
+| Product overview | **94** | 78 | +16 |
+| Technical architecture | **95** | 65 | +30 |
+| Abstract concepts | **92** | 76 | +16 |
+| **Average** | **93.5** | **71.75** | **+21.75** |
+
+The biggest gains come from the hardest scenarios — abstract concepts and complex architectures where labeled-box diagrams struggle most.
+
+### Side-by-Side Examples
+
+#### Technical Architecture (biggest improvement: +30)
+
+| With Visual Metaphor (95/100) | Standard Pipeline (65/100) |
+|:---:|:---:|
+| ![Enhanced](docs/comparison/storytelling_ruview.png) | ![Standard](docs/comparison/standard_ruview.png) |
+
+WiFi sensing is inherently invisible. The metaphor — waves passing through a person with a pose overlay — makes the invisible visible. The standard approach generates an accurate but opaque block diagram.
+
+#### Abstract Concepts (+16)
+
+| With Visual Metaphor (92/100) | Standard Pipeline (76/100) |
+|:---:|:---:|
+| ![Enhanced](docs/comparison/storytelling_pi.png) | ![Standard](docs/comparison/standard_pi.png) |
+
+The "Knowledge City" metaphor turns abstract ideas (collective intelligence, consensus mechanisms) into something tangible. Named districts and glowing buildings communicate structure that a flowchart can't.
+
+<details>
+<summary><strong>More examples (Application Ecosystem, Product Overview)</strong></summary>
+
+#### Application Ecosystem (+25)
+
+| With Visual Metaphor (93/100) | Standard Pipeline (68/100) |
+|:---:|:---:|
+| ![Enhanced](docs/comparison/storytelling_ruvector_apps.png) | ![Standard](docs/comparison/standard_ruvector_apps.png) |
+
+A hexagonal core radiating to 6 distinct application scenes. "One engine, six uses" is understood in 2 seconds.
+
+#### Product Overview (+16)
+
+| With Visual Metaphor (94/100) | Standard Pipeline (78/100) |
+|:---:|:---:|
+| ![Enhanced](docs/comparison/storytelling_ruvector_overview.png) | ![Standard](docs/comparison/standard_ruvector_overview.png) |
+
+The "Living Library" metaphor communicates "intelligent search that learns" instantly. The standard version lists features but doesn't convey *why you'd care*.
+
+</details>
+
+### What Changed (4 targeted agent improvements)
+
+These changes work within the existing pipeline architecture. No new agents, no structural changes, no breaking modifications.
+
+<div align="center">
+<img src="docs/pipeline_flow.svg" alt="Enhanced pipeline flow diagram" width="780"/>
+</div>
+
+| Agent | What Changed | Why |
+|-------|-------------|-----|
+| **Planner** | Added mandatory visual metaphor discovery step before element description | The metaphor becomes the diagram's backbone — every element reinforces a single coherent analogy |
+| **Stylist** | Added rule to preserve and enhance metaphors (never flatten into generic boxes) + rendering artifact removal | Previous behavior could strip away the Planner's metaphor during style refinement |
+| **Visualizer** | Added multi-candidate parallel generation + tag stripping + 9-rule quality prompt | More candidates = better selection; tag stripping prevents `[PRIMARY]` annotations from leaking into rendered text |
+| **Critic** | Added 7 mandatory visual excellence checks with strict pass threshold | Prevents premature "looks good" responses; enforces visual hierarchy, legibility, color harmony |
+
+### Quality Journey
+
+<div align="center">
+<img src="docs/quality_progression.svg" alt="Quality score progression chart" width="700"/>
+</div>
+
+Each iteration built on the one before. The storytelling step (v6) produced the largest single improvement because it changes the *strategy* rather than just the *execution*.
+
+### New Features Added
+
+| Feature | Description |
+|---------|-------------|
+| **`cli_generate.py`** | Headless CLI for scripted/automated diagram generation (no Streamlit required) |
+| **`mcp_server/`** | MCP server for integration with Claude Code and other AI coding assistants |
+| **Multi-candidate generation** | Generate N candidates in parallel, store all for comparison |
+
+---
 
 ## Overview of PaperBanana
 
@@ -113,10 +131,10 @@ Here are some example diagrams and plots generated by PaperBanana:
 PaperBanana achieves high-quality academic illustration generation by orchestrating five specialized agents in a structured pipeline:
 
 1. **Retriever Agent**: Identifies the most relevant reference diagrams from a curated collection to guide downstream agents
-2. **Planner Agent**: Discovers a visual metaphor for the concept, then translates method content into a compelling visual description using in-context learning
-3. **Stylist Agent**: Refines descriptions while preserving the chosen metaphor, applying academic aesthetic standards and removing rendering artifacts
-4. **Visualizer Agent**: Transforms textual descriptions into visual outputs using state-of-the-art image generation models, with multi-candidate parallel generation
-5. **Critic Agent**: Forms a closed-loop refinement mechanism with 7 mandatory visual excellence checks through multi-round iterative improvements
+2. **Planner Agent**: Translates method content and communicative intent into comprehensive textual descriptions using in-context learning
+3. **Stylist Agent**: Refines descriptions to adhere to academic aesthetic standards using automatically synthesized style guidelines
+4. **Visualizer Agent**: Transforms textual descriptions into visual outputs using state-of-the-art image generation models
+5. **Critic Agent**: Forms a closed-loop refinement mechanism with the Visualizer through multi-round iterative improvements
 
 ## Quick Start
 
@@ -155,9 +173,9 @@ First download [PaperBananaBench](https://huggingface.co/datasets/dwzhu/PaperBan
     uv pip install -r requirements.txt
     ```
 
-## Usage
+### Launch PaperBanana
 
-### Interactive Demo (Streamlit)
+#### Interactive Demo (Streamlit)
 The easiest way to launch PaperBanana is via the interactive Streamlit demo:
 ```bash
 streamlit run demo.py
@@ -177,13 +195,13 @@ The web interface provides two main workflows:
 - Select resolution (2K/4K) and aspect ratio.
 - Download the refined high-resolution output.
 
-### CLI — Single Image Generation
+#### CLI — Single Image Generation
 
 ```bash
-# Generate a diagram from inline text (full storytelling pipeline)
+# Full pipeline with storytelling planner
 python cli_generate.py \
   --content "Your methodology text here..." \
-  --caption "Figure 1: System architecture showing data flow between components." \
+  --caption "Figure 1: System architecture." \
   --output diagram.png \
   --mode demo_full \
   --retrieval auto \
@@ -193,35 +211,29 @@ python cli_generate.py \
 python cli_generate.py \
   --content-file method_section.md \
   --caption "Figure 2: Overview of the proposed approach." \
-  --output diagram.png \
-  --mode demo_full \
-  --critic-rounds 3
+  --output diagram.png
 
-# Generate 5 candidates and pick the best
+# Generate multiple candidates
 python cli_generate.py \
   --content-file method_section.md \
   --caption "Figure 1: Pipeline architecture." \
   --output diagram.png \
-  --candidates 5 \
-  --mode demo_full
+  --candidates 5
 
-# Generate a statistical plot from JSON data
+# Statistical plot from JSON data
 python cli_generate.py \
   --content '{"categories": ["A", "B", "C"], "accuracy": [92.3, 88.1, 95.7]}' \
-  --caption "Figure 3: Model performance comparison." \
+  --caption "Model performance comparison." \
   --output plot.png \
-  --task plot \
-  --mode demo_planner_critic
+  --task plot
 
 # Quick draft (faster, lower quality)
 python cli_generate.py \
   --content "Your content" \
-  --caption "Draft diagram" \
+  --caption "Draft" \
   --output draft.png \
   --mode vanilla --quiet
 ```
-
-**CLI Options:**
 
 | Flag | Values | Default | Description |
 |------|--------|---------|-------------|
@@ -229,7 +241,6 @@ python cli_generate.py \
 | `--content-file` | path | required* | File containing content |
 | `--caption` | text | required | Figure caption / visual intent |
 | `--output` | path | output.png | Output image path |
-| `--output-json` | path | - | Save full pipeline JSON |
 | `--task` | diagram, plot | diagram | Type of visualization |
 | `--mode` | demo_full, demo_planner_critic, vanilla | demo_full | Pipeline mode |
 | `--retrieval` | auto, manual, random, none | none | Reference retrieval strategy |
@@ -240,25 +251,16 @@ python cli_generate.py \
 
 *One of `--content` or `--content-file` is required.
 
-### MCP Server (for AI Assistants)
-
-PaperBanana includes an MCP server for integration with Claude Code and other MCP-compatible tools:
+#### MCP Server (for AI Assistants)
 
 ```bash
-# Install additional dependency
 pip install fastmcp
-
-# Run the MCP server
 python -m mcp_server.server
 ```
 
-Two tools are exposed:
-- `generate_diagram(source_context, caption, ...)` — Full storytelling pipeline for methodology diagrams
-- `generate_plot(data_json, intent, ...)` — Statistical plot generation from JSON data
+Tools: `generate_diagram(source_context, caption, ...)` and `generate_plot(data_json, intent, ...)`
 
-### Batch Evaluation (main.py)
-
-For running against the full PaperBananaBench dataset:
+#### Command-Line Interface (Batch Evaluation)
 ```bash
 python main.py \
   --dataset_name "PaperBananaBench" \
@@ -321,15 +323,10 @@ streamlit run visualize/show_referenced_eval.py
 
 ## Key Features
 
-### Storytelling Pipeline (New)
-- **Visual Metaphor Discovery**: Finds real-world analogies before drawing, producing diagrams that click instantly
-- **Metaphor Preservation**: Stylist enhances rather than flattens the chosen metaphor
-- **Multi-Candidate Generation**: Generate N candidates in parallel, pick the best
-- **Visual Excellence Scoring**: 7 mandatory quality checks with strict pass criteria
-
 ### Multi-Agent Pipeline
 - **Reference-Driven**: Learns from curated examples through generative retrieval
-- **Iterative Refinement**: Critic-Visualizer loop for progressive quality improvement
+- **Visual Storytelling**: Planner discovers metaphors that make concepts click instantly
+- **Iterative Refinement**: Critic-Visualizer loop with 7 mandatory quality checks
 - **Style-Aware**: Automatically synthesized aesthetic guidelines ensure academic quality
 - **Flexible Modes**: Multiple experiment modes for different use cases
 
@@ -343,6 +340,7 @@ streamlit run visualize/show_referenced_eval.py
 - **Modular Agents**: Each agent is independently configurable
 - **Task Support**: Handles both conceptual diagrams and data plots
 - **MCP Server**: Drop-in integration with AI coding assistants
+- **Evaluation Framework**: Built-in evaluation against ground truth with multiple metrics
 - **Async Processing**: Efficient batch processing with configurable concurrency
 
 
@@ -353,7 +351,6 @@ streamlit run visualize/show_referenced_eval.py
 - [ ] Expand the reference set to support more areas beyond computer science.
 - [ ] OCR post-processing to verify text rendering quality after generation
 - [ ] Automated best-pick selection using VLM judge across multi-candidates
-- [ ] Text overlay compositing for guaranteed legibility on complex backgrounds
 
 
 ## Community Supports
