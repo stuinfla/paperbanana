@@ -13,3 +13,9 @@ docs/claude-conversations/
 
 # Showcase zip
 *.zip
+
+# Local demo/dev files
+analyzer.html
+skill-demo.html
+paperbanana_showcase_v2/
+static/gallery/
