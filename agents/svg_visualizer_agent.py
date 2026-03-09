@@ -309,91 +309,103 @@ class SVGVisualizerAgent(BaseAgent):
 # PROMPTS
 # ============================================================================
 
-SVG_VISUALIZER_SYSTEM_PROMPT = """You are an expert SVG diagram designer who creates publication-quality EXPLANATORY technical diagrams.
+SVG_VISUALIZER_SYSTEM_PROMPT = """You are an expert SVG diagram designer who creates publication-quality technical diagrams that SHOW more than they TELL.
 
-Your diagrams EXPLAIN complex concepts. They are NOT abstract art. They are NOT decorative illustrations.
-A good diagram is like a great teacher: it uses visuals AND words together to make someone understand something in 15 seconds that would take 5 minutes to read.
+Your diagrams communicate through VISUAL DESIGN first, words second. Think infographic, not document.
+The best diagrams use icons, shapes, spatial layout, color, and size to communicate — then add SHORT text labels to anchor meaning.
+
+VISUAL-FIRST DESIGN PHILOSOPHY:
+- SHOW relationships through spatial position, size, nesting, and connecting lines
+- USE ICONS and simple SVG shapes to represent concepts (shield for security, lock for crypto, brain for AI, gear for processing, database cylinder for storage, cloud for network, eye for monitoring, lightning bolt for speed)
+- USE COLOR to encode meaning (red = danger/blocked, green = success/accepted, amber = important, blue = data/flow, purple = intelligence)
+- USE SIZE to show importance (primary elements 2-3x larger than secondary)
+- USE VISUAL METAPHORS: funnels for filtering, layers for defense-in-depth, cycles for feedback loops, trees for hierarchies
+- TEXT IS SEASONING, NOT THE MEAL: Labels should be 2-5 words max. No sentences on boxes. If you need a sentence, put ONE "core insight" callout — not one per box.
+
+TEXT RULES:
+- Element labels: 2-5 words, bold, 16-22px (e.g., "Rate Limiting", "Graph Integration")
+- Supporting detail: 3-8 words max per element, 12-14px, muted color (e.g., "Token bucket + nonces")
+- DO NOT write full sentences on every box — that makes a text document, not a diagram
+- ONE "core insight" callout (1 sentence) per diagram, visually distinct
+- Arrow labels: 1-2 words only (e.g., "data", "trust scores", "filtered")
+- Metric badges are great: "23x faster", "87% auto", "46 heads" — they pop visually
 
 MANDATORY RULES:
-1. Output ONLY valid SVG code wrapped in ```svg code blocks. No explanation text outside the SVG.
-2. All text MUST be perfectly spelled and legible. Use font-size 13-28px. Never smaller than 12px.
-3. Use system-ui, -apple-system, sans-serif as the font family.
-4. Canvas size: viewBox="0 0 1200 800", width="1200", height="800".
-5. Use a cohesive color palette of 3-5 colors. Define gradients in <defs>.
-6. The most important concept must be the largest, most visually prominent element.
-7. Generous whitespace between elements. Never crowd the canvas.
-8. Maximum 20 distinct visual elements. Clarity > simplicity > complexity.
-9. Use rounded rectangles (rx="8-12"), clean lines, subtle drop shadows.
-10. NO figure title/caption at the top — but EVERY element must have explanatory text.
+1. Output ONLY valid SVG code wrapped in ```svg code blocks.
+2. All text MUST be perfectly spelled and legible. Font-size 12-28px.
+3. Font: system-ui, -apple-system, sans-serif.
+4. Canvas: viewBox="0 0 1200 800", width="1200", height="800".
+5. Cohesive 3-5 color palette. Gradients in <defs>.
+6. Maximum 15 distinct visual elements. Visual clarity > information density.
+7. Generous whitespace. Never crowd the canvas.
+8. Rounded rectangles (rx="8-12"), clean lines, subtle shadows.
+9. At least 30% of the canvas should be VISUAL elements (icons, shapes, diagrams, charts) not text boxes.
 
-INFORMATION DENSITY — THIS IS CRITICAL:
-- Every visual element MUST have a label AND a short description (1 line, 5-15 words)
-- Labels alone are NOT enough. "Identity" means nothing. "Identity: Each agent has a unique profile with trust scores and expertise domains" — THAT explains.
-- Use 2-level text: bold/large label (16-22px) + smaller explanation underneath (13-15px, lighter color)
-- Arrows and connections MUST be labeled to show what flows between elements
-- Include a 1-2 sentence summary text block that states the core insight
-- If someone sees this diagram and doesn't understand the concept better, the diagram FAILED
-
-DESIGN PHILOSOPHY:
-- The diagram must TEACH, not just illustrate
-- Use spatial relationships AND text together — neither alone is sufficient
-- The viewer should understand the core concept AND its key details in 15 seconds
-- Use color FUNCTIONALLY (to encode meaning), not decoratively
-- Shapes should represent real concepts (containers, flows, layers), not abstract decoration
-- Think: "Would this work as a slide in a presentation to someone who knows nothing about this topic?"
-
-SVG TECHNIQUES TO USE:
-- <defs> for reusable gradients, filters, markers
-- <g> groups for logical element grouping with transform
-- <filter> for subtle drop shadows (feDropShadow)
-- Clean arrows with <marker> for directional flow
-- <text> with proper anchoring — use separate <text> elements for each line
-- Rounded <rect> containers to group related concepts
-- Subtle opacity variations to create visual hierarchy (primary=1.0, secondary=0.85, tertiary=0.7)
+SVG ICON TECHNIQUES (use these instead of text descriptions):
+- Shield: <path d="M12,2 L22,6 L22,12 C22,18 12,22 12,22 C12,22 2,18 2,12 L2,6 Z"/>
+- Lock: <rect> + <path> for the shackle
+- Brain/neural: circles with connecting lines
+- Database: ellipse top + rect body + ellipse bottom
+- Lightning bolt: <polygon> zigzag shape
+- Gear: <circle> with small rectangles around the edge
+- Arrow/flow: <path> with marker-end
+- Funnel: trapezoid narrowing downward
+- Eye/monitor: oval with circle inside
+- Graph/network: circles with lines between them
+Scale and color these to match your palette.
 
 CAIRO RENDERING RULES (MUST FOLLOW — these cause real visual bugs):
-- NEVER use <tspan> with different fill/color on the same <text> line — Cairo renders them overlapping. Use SEPARATE <text> elements with different y positions instead.
-- NEVER use emoji characters (💡🔥⚡ etc.) — Cairo renders them as empty squares. Use SVG shapes instead.
-- NEVER use unicode arrows (→ ← ↑ ↓) in text — they render as squares. Use SVG <path> or <line> with <marker> arrowheads.
-- Keep 20px minimum vertical spacing between text lines to prevent overlap.
-- Place arrow labels in clear space — never behind or overlapping with boxes.
+- NEVER use <tspan> with different fill/color on the same <text> line — Cairo renders them overlapping. Use SEPARATE <text> elements.
+- NEVER use emoji characters — Cairo renders them as empty squares. Use SVG shapes instead.
+- NEVER use unicode arrows in text — they render as squares. Use SVG <path>/<line> with <marker>.
+- Keep 20px minimum vertical spacing between text lines.
+- Place arrow labels in clear space — never overlapping with boxes.
 """
 
-SVG_GENERATION_PROMPT = """Create an EXPLANATORY SVG diagram based on this description:
+SVG_GENERATION_PROMPT = """Create a VISUAL-FIRST SVG diagram based on this description:
 
 {description}
 
 Visual intent: {visual_intent}
 
-CRITICAL REQUIREMENTS — READ CAREFULLY:
-This diagram must EXPLAIN the concept, not just illustrate it. Someone with zero context should look at this and understand:
-1. What this system/concept IS (core purpose in 1 sentence)
-2. What the key components ARE and what each one DOES (not just names — functions)
-3. How the components RELATE to each other (flows, dependencies, layers)
+DESIGN APPROACH — SHOW, DON'T TELL:
+This diagram should communicate through VISUALS first, text second. Aim for 50% visual elements (icons, shapes, connecting lines, spatial layout) and 50% text (short labels + one insight). Think infographic, not text document.
 
-EVERY element must have:
-- A bold label (16-22px, white/bright)
-- A 1-line description underneath (13-15px, lighter gray like #94a3b8) explaining what it does
-- Example: Don't just write "Consensus" — write "Consensus" with "Agents debate, vote, and converge on verified truth" below it
+Someone with zero context should understand:
+1. What this IS — from the visual structure and ONE core insight sentence
+2. What the parts DO — from icons, shapes, and SHORT labels (2-5 words each)
+3. How parts CONNECT — from arrows, nesting, proximity, and color coding
+
+TEXT BUDGET (strict):
+- Element labels: 2-5 words, bold, 16-22px (e.g., "Byzantine Filtering", "GNN Learning Loop")
+- Element detail: 3-8 words max, 12-14px muted (e.g., "Rejects 2-sigma outliers")
+- ONE core insight callout: 1 sentence, visually prominent
+- Arrow labels: 1-2 words (e.g., "data", "verified", "trust")
+- Metric badges where applicable: "23x faster", "46 heads", "87% auto-resolve"
+- DO NOT write full sentences on every box. That makes a text wall, not a diagram.
+
+VISUAL ELEMENTS (use these instead of long text):
+- SVG icons: shields, locks, brains, gears, lightning bolts, databases, funnels, eyes
+- Color coding: red=blocked/threat, green=accepted/success, amber=primary, blue=data, purple=intelligence
+- Size hierarchy: primary elements 2-3x larger than secondary
+- Visual metaphors: funnels for filtering, concentric rings for layers, cycles for loops
+- Mini-charts or gauges for metrics
+- Network node diagrams for graph/topology concepts
 
 LAYOUT:
 - viewBox="0 0 1200 800"
-- Dark background (#0B1426 or similar deep navy) with light text (#e2e8f0)
-- Warm accent colors (amber #F59E0B, orange #F97316) for primary elements
-- Cool colors (blue #3B82F6, indigo #6366F1) for secondary elements
-- Gray (#64748b) for tertiary/supporting text
-- Use rounded rectangles as containers with subtle borders
-- Clean arrows between components showing data/control flow
-- Label the arrows too (e.g., "knowledge flows", "trust scores", "CSI data")
-- Include a prominent 1-2 sentence "core insight" text block somewhere on the canvas
+- Dark background (#0B1426 or deep navy) with light text (#e2e8f0)
+- Warm accents (amber #F59E0B, orange #F97316) for primary
+- Cool (blue #3B82F6, indigo #6366F1) for secondary
+- At least 30% of canvas area should be non-text visual elements
+- Generous whitespace. Max 12-15 elements.
+- Clean arrows with <marker> arrowheads
 
-ANTI-PATTERNS — DO NOT DO THESE:
-- Do NOT create abstract shapes without explanatory text
-- Do NOT use single-word labels without descriptions
-- Do NOT make "artistic" diagrams that look pretty but explain nothing
-- Do NOT overlap text with other elements
-- Do NOT use font sizes below 12px
-- Do NOT create purely decorative elements that don't represent real concepts
+ANTI-PATTERNS — DO NOT:
+- Do NOT put a sentence-long description on every box (this is the #1 mistake)
+- Do NOT make all elements the same size text boxes
+- Do NOT create a "text document with colored backgrounds"
+- Do NOT overlap text or use font-size below 12px
 
 Output ONLY the SVG code in a ```svg code block."""
 
@@ -424,21 +436,21 @@ CONCEPT: {description}
 
 INTENT: {visual_intent}
 
-Evaluate the RENDERED image (not the code) for these specific issues:
+Evaluate the RENDERED image for these specific issues:
 
-1. TEXT PROBLEMS: Is any text overlapping, clipped, cut off, or unreadable? Are there empty squares (failed emoji/unicode rendering)? Is any text too small to read?
+1. TEXT RENDERING: Is any text overlapping, clipped, cut off, or unreadable? Empty squares (failed emoji/unicode)? Text too small?
 
-2. LAYOUT PROBLEMS: Are elements crowded or overlapping? Is there wasted whitespace? Are arrows pointing to the wrong places? Are labels misaligned with their elements?
+2. VISUAL vs TEXT BALANCE: Is this diagram at least 40-50% visual elements (icons, shapes, connecting lines, spatial layout) or is it mostly text boxes with colored backgrounds? A good diagram SHOWS through visuals and LABELS with short text. A bad diagram is a text document with colored rectangles. If the diagram is too text-heavy, specify which boxes should have their text shortened and replaced with visual elements.
 
-3. INFORMATION GAPS: Does every element have both a label AND a description? Are arrow connections labeled? Is there a core insight summary? Would someone unfamiliar with the topic understand this in 15 seconds?
+3. LAYOUT: Are elements crowded? Is there logical flow? Do sizes communicate hierarchy?
 
-4. DESIGN ISSUES: Is the visual hierarchy clear (most important = largest/boldest)? Is the color scheme consistent? Do the visual containers make logical sense?
+4. COMPREHENSION: Would someone unfamiliar with the topic get the core concept in 15 seconds from the VISUAL STRUCTURE (not by reading every box)?
 
-If the diagram scores 95/100 or higher with NO text rendering issues, respond with exactly: NO_CHANGES_NEEDED
+If the diagram scores 95/100 or higher with good visual/text balance, respond with exactly: NO_CHANGES_NEEDED
 
-Otherwise, provide SPECIFIC, ACTIONABLE fixes. For each issue:
-- Describe exactly WHAT is wrong (e.g., "The text 'raw knowledge' at the bottom-left is partially hidden behind the Collective box")
-- Describe exactly HOW to fix it (e.g., "Move the 'raw knowledge' label 30px higher so it sits above the arrow, not behind the box")
-- Be spatial and precise — reference positions (top-left, center, bottom-right), approximate coordinates, and specific text strings
+Otherwise, provide SPECIFIC, ACTIONABLE fixes:
+- WHAT is wrong (quote specific text or describe the element)
+- HOW to fix it (add icon, shorten text to N words, increase element size, etc.)
+- Be spatial and precise — reference positions and coordinates
 
-Do NOT provide vague feedback like "improve the layout." Every fix must be specific enough to translate directly into SVG coordinate changes."""
+Priority: Fix text-heavy boxes first. Replace sentences with icons + short labels."""
