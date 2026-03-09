@@ -4,7 +4,9 @@
 
 **AI-powered academic diagrams that actually communicate ideas — not just labeled boxes.**
 
-10x faster | 20x cheaper | 95.8/100 quality (self-evaluated via vision critic)
+For researchers, students, and anyone who needs publication-quality figures from text descriptions.
+
+10x faster | 20x cheaper | 95.8/100 avg quality (self-evaluated via vision critic)
 
 <a href="https://huggingface.co/papers/2601.23265"><img src="assets/paper-page-xl.svg" alt="Paper page on HF"></a>
 <a href="https://huggingface.co/datasets/dwzhu/PaperBananaBench"><img src="assets/dataset-on-hf-xl.svg" alt="Dataset on HF"></a>
@@ -58,45 +60,44 @@ export GOOGLE_API_KEY="your-key"  # Free at https://aistudio.google.com/apikey
 
 ---
 
-**[View the showcase](https://stuinfla.github.io/paperbanana/)** to see 10 example diagrams across Pi, RuVector, and Ruflo.
+<div align="center">
+
+**[View the showcase](https://stuinfla.github.io/paperbanana/)** — 10 example diagrams across Pi, RuVector, and Ruflo
+
+![Examples](assets/teaser_figure.jpg)
+
+</div>
 
 ---
 
-### What They Built
+## What's Different About This Fork
 
-The PaperBanana team at Peking University and Google Cloud created a multi-agent framework for academic illustration — a pipeline of **Retriever, Planner, Stylist, Visualizer, and Critic** agents that transforms scientific text into diagrams using reference-driven in-context learning and iterative refinement. It was a strong foundation: technically accurate diagrams with NeurIPS-level aesthetics. Originally open-sourced as [PaperVizAgent](https://github.com/google-research/papervizagent).
+**Original research by** Dawei Zhu, Rui Meng, Yale Song, Xiyu Wei, Sujian Li, Tomas Pfister, Jinsung Yoon *(Peking University + Google Cloud AI Research)*. Originally open-sourced as [PaperVizAgent](https://github.com/google-research/papervizagent).
 
 **Enhanced by** [Stuart Kerr](https://github.com/stuinfla) — SVG pipeline, visual storytelling, vision critic, 10x speed, 20x cost reduction.
 
-### What We Added
-
 | | Original | This Fork |
 |---|---|---|
-| **Rendering** | Raster image generation (Gemini) | SVG code + Cairo render (100% text rendering fidelity) |
-| **Speed** | 2-5 minutes per diagram | ~30 seconds in SVG mode (10x faster) |
-| **Cost** | $0.50-2.00 per diagram | ~$0.05 in SVG mode (20x cheaper) |
-| **Quality** | ~62-72/100 average | **95.8/100 average** (self-evaluated via vision critic) |
-| **Design philosophy** | Labeled boxes and arrows | Visual-first: icons, shapes, spatial layout with short labels |
-| **Self-correction** | Text-based critic feedback | Vision critic sees the rendered PNG, sends spatial fixes |
-| **Output format** | Raster PNG only | Editable SVG + PNG (version-controllable, diffable) |
-| **Integration** | Streamlit UI only | Claude Code Skill, MCP Server, CLI, Streamlit, Python API |
+| **Rendering** | Raster image generation | SVG code + Cairo render (100% text fidelity) |
+| **Speed** | 2-5 min per diagram | ~30s in SVG mode |
+| **Cost** | $0.50-2.00 per diagram | ~$0.05 in SVG mode |
+| **Quality** | ~62-72/100 avg | 95.8/100 avg (self-evaluated) |
+| **Design** | Labeled boxes and arrows | Visual-first: icons, shapes, spatial layout |
+| **Self-correction** | Text-based critic | Vision critic sees the rendered PNG, sends spatial fixes |
+| **Output** | Raster PNG only | Editable SVG + PNG |
+| **Integration** | Streamlit only | Skill, MCP, CLI, Streamlit, Python API |
 
-**Key innovations:**
-
-- **Visual storytelling** — the Planner discovers a visual metaphor before drawing anything ("What is this LIKE?")
-- **Vision critic loop** — renders SVG to PNG, sends to multimodal Gemini for visual evaluation, applies spatial fixes until 95+/100
-- **Visual-first design** — 50% icons/shapes/spatial layout, 50% short text labels
-- **Cairo-safe rendering** — discovered and prevented 4 Cairo-specific bugs
-- **Claude Code integration** — 2-command skill install, copy-paste MCP setup, headless CLI
+The core innovation: instead of drawing labeled boxes, the Planner first asks **"What is this concept LIKE?"** — finding a visual metaphor that makes the diagram click in seconds.
 
 ---
 
 ## Full Install
 
-For CLI, Streamlit, Python API, or MCP server — clone and set up:
+For CLI, Streamlit, Python API, or MCP server:
 
 ```bash
-git clone https://github.com/stuinfla/paperbanana && cd paperbanana && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+git clone https://github.com/stuinfla/paperbanana && cd paperbanana
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 export GOOGLE_API_KEY="your-key-here"  # Free at https://aistudio.google.com/apikey
 ```
 
@@ -129,10 +130,8 @@ export GOOGLE_API_KEY="your-key-here"  # Free at https://aistudio.google.com/api
 .venv/bin/streamlit run demo.py
 ```
 
-### Python API
-
 <details>
-<summary>Show Python code</summary>
+<summary><strong>Python API</strong></summary>
 
 ```python
 import asyncio
@@ -180,9 +179,8 @@ asyncio.run(generate())
 
 </details>
 
----
-
-## CLI Reference
+<details>
+<summary><strong>CLI Reference</strong></summary>
 
 | Flag | Values | Default | Description |
 |------|--------|---------|-------------|
@@ -202,7 +200,10 @@ asyncio.run(generate())
 
 *One of `--content` or `--content-file` is required.
 
-## Models and Cost
+</details>
+
+<details>
+<summary><strong>Models and Cost</strong></summary>
 
 | Model | Role | Quality | Speed | Cost |
 |-------|------|---------|-------|------|
@@ -220,7 +221,7 @@ defaults:
   image_model_name: "gemini-2.5-flash-image"
 ```
 
-| Quality | Cost/image | Time |
+| Quality Tier | Cost/image | Time |
 |---------|-----------|------|
 | SVG pipeline (best) | ~$0.05 | ~30s |
 | Full raster pipeline | ~$0.10 | ~2 min |
@@ -228,67 +229,51 @@ defaults:
 
 Optional: download [PaperBananaBench](https://huggingface.co/datasets/dwzhu/PaperBananaBench) into `data/PaperBananaBench/` for +15 quality points via reference retrieval.
 
----
-
-Here are some example diagrams and plots generated by PaperBanana:
-![Examples](assets/teaser_figure.jpg)
+</details>
 
 ---
 
-## Deep Dive: Visual Storytelling Pipeline
+## How It Works
 
-> The enhancements below work within the existing 5-agent architecture — improving what each agent does without changing the pipeline structure. All original functionality (Streamlit demo, batch evaluation, all experiment modes) remains fully backward-compatible.
+### Visual Storytelling Pipeline
 
-### The Idea
-
-PaperBanana's pipeline already produces technically accurate diagrams. This enhancement focuses on a complementary dimension: **communication effectiveness**. Instead of changing the rendering or the pipeline structure, we change **how the Planner thinks about what to draw**.
-
-The core change is small but impactful: before describing any boxes or arrows, the Planner now asks three questions:
+Before drawing anything, the Planner asks three questions:
 
 <div align="center">
 <img src="docs/approach_comparison.svg" alt="Standard vs Storytelling approach comparison" width="700"/>
 </div>
 
-The idea is inspired by how the best academic figures work — they use visual analogies to make abstract concepts concrete. A container format becomes a shipping crate with compartments. A self-learning database becomes a living library. The reviewer "gets it" in seconds instead of minutes.
+A container format becomes a shipping crate with compartments. A self-learning database becomes a living library. The reviewer "gets it" in seconds.
 
-### Results
+### SVG Pipeline: Vision Critic Loop
 
-We tested across 4 diverse scenarios using the **same image generation model** (Gemini). The only variable is what the pipeline asks the model to draw.
+The highest-quality mode. LLM writes SVG code directly, Cairo renders to PNG, multimodal Gemini evaluates the rendered image, and spatial fixes are applied automatically.
 
-<div align="center">
-<img src="docs/quality_comparison.svg" alt="Quality score comparison chart" width="700"/>
-</div>
+1. **SVG Generation** -- LLM writes SVG with labels and descriptions on every element
+2. **Cairo Rendering** -- 100% text fidelity (text placed by renderer, not predicted by a neural net)
+3. **Vision Critique** -- evaluates for overlap, clipping, layout, missing information
+4. **Self-Correction** -- fixes applied, re-rendered, re-evaluated until 95+/100
 
-| Scenario | With Enhancement | Baseline | Improvement |
-|----------|:---------------:|:--------:|:-----------:|
-| Application ecosystem | **93** | 68 | +25 |
-| Product overview | **94** | 78 | +16 |
-| Technical architecture | **95** | 65 | +30 |
-| Abstract concepts | **92** | 76 | +16 |
-| **Average** | **93.5** | **71.75** | **+21.75** |
+### Side-by-Side: Before and After
 
-The biggest gains come from the hardest scenarios — abstract concepts and complex architectures where labeled-box diagrams struggle most.
-
-### Side-by-Side Examples
-
-#### Technical Architecture (biggest improvement: +30)
+#### Technical Architecture (+30 points)
 
 | With Visual Metaphor (95/100) | Standard Pipeline (65/100) |
 |:---:|:---:|
 | ![Enhanced](docs/comparison/storytelling_ruview.png) | ![Standard](docs/comparison/standard_ruview.png) |
 
-WiFi sensing is inherently invisible. The metaphor — waves passing through a person with a pose overlay — makes the invisible visible. The standard approach generates an accurate but opaque block diagram.
+WiFi sensing is invisible. The metaphor -- waves passing through a person with a pose overlay -- makes the invisible visible.
 
-#### Abstract Concepts (+16)
+#### Abstract Concepts (+16 points)
 
 | With Visual Metaphor (92/100) | Standard Pipeline (76/100) |
 |:---:|:---:|
 | ![Enhanced](docs/comparison/storytelling_pi.png) | ![Standard](docs/comparison/standard_pi.png) |
 
-The "Knowledge City" metaphor turns abstract ideas (collective intelligence, consensus mechanisms) into something tangible. Named districts and glowing buildings communicate structure that a flowchart can't.
+The "Knowledge City" metaphor turns abstract ideas into something tangible.
 
 <details>
-<summary><strong>More examples (Application Ecosystem, Product Overview)</strong></summary>
+<summary><strong>More examples</strong></summary>
 
 #### Application Ecosystem (+25)
 
@@ -296,112 +281,79 @@ The "Knowledge City" metaphor turns abstract ideas (collective intelligence, con
 |:---:|:---:|
 | ![Enhanced](docs/comparison/storytelling_ruvector_apps.png) | ![Standard](docs/comparison/standard_ruvector_apps.png) |
 
-A hexagonal core radiating to 6 distinct application scenes. "One engine, six uses" is understood in 2 seconds.
-
 #### Product Overview (+16)
 
 | With Visual Metaphor (94/100) | Standard Pipeline (78/100) |
 |:---:|:---:|
 | ![Enhanced](docs/comparison/storytelling_ruvector_overview.png) | ![Standard](docs/comparison/standard_ruvector_overview.png) |
 
-The "Living Library" metaphor communicates "intelligent search that learns" instantly. The standard version lists features but doesn't convey *why you'd care*.
-
 </details>
 
-### SVG Pipeline: Vision Critic Loop (New)
+### Quality Results
 
-The SVG pipeline is the highest-quality rendering mode. Instead of generating raster images via Gemini Image Gen, it has the LLM write SVG code directly, renders with Cairo, then self-corrects via a vision critic.
+<div align="center">
+<img src="docs/quality_comparison.svg" alt="Quality score comparison chart" width="700"/>
+</div>
 
-**How it works:**
+| Scenario | Enhanced | Baseline | Gain |
+|----------|:-------:|:-------:|:----:|
+| Application ecosystem | **93** | 68 | +25 |
+| Product overview | **94** | 78 | +16 |
+| Technical architecture | **95** | 65 | +30 |
+| Abstract concepts | **92** | 76 | +16 |
+| **Average** | **93.5** | **71.75** | **+21.75** |
 
-1. **SVG Generation**: LLM writes SVG code with enforced rules — every element has a label AND description, no emoji, no unicode arrows, 20px minimum text spacing
-2. **Cairo Rendering**: `cairosvg` renders SVG to PNG with 100% text rendering fidelity (text is placed by the renderer, not predicted by a neural net)
-3. **Vision Critique**: Rendered PNG is sent to multimodal Gemini which evaluates for text overlap, clipping, layout issues, missing information
-4. **Self-Correction**: Critic's spatial fixes are applied to the SVG code, re-rendered, and re-evaluated until the diagram scores 95+
+---
 
-**Cairo Rendering Rules** (discovered through testing, built into prompts):
-
-| Rule | Why |
-|------|-----|
-| Never use `<tspan>` with different fill colors on the same `<text>` line | Cairo renders them overlapping instead of inline |
-| Never use emoji characters in text elements | Cairo renders them as empty squares |
-| Never use unicode arrows (arrows, bullets) in text | Cairo renders them as squares |
-| Keep 20px minimum vertical spacing between text lines | Cairo clips text that's too close together |
-
-**Quality Results**: 10 test diagrams across 3 projects averaged **95.8/100**, with all 10 scoring 95+. This is a +34 point improvement over the vanilla baseline (62/100) and +13 over the raster storytelling pipeline (93/100).
-
-### What Changed (4 targeted agent improvements + SVG pipeline)
-
-These changes work within the existing pipeline architecture. No new agents, no structural changes, no breaking modifications.
+## Architecture
 
 <div align="center">
 <img src="docs/pipeline_flow.svg" alt="Enhanced pipeline flow diagram" width="780"/>
 </div>
 
-| Agent | What Changed | Why |
-|-------|-------------|-----|
-| **Planner** | Added mandatory visual metaphor discovery step before element description | The metaphor becomes the diagram's backbone — every element reinforces a single coherent analogy |
-| **Stylist** | Added rule to preserve and enhance metaphors (never flatten into generic boxes) + rendering artifact removal | Previous behavior could strip away the Planner's metaphor during style refinement |
-| **Visualizer** | Added multi-candidate parallel generation + tag stripping + 9-rule quality prompt | More candidates = better selection; tag stripping prevents `[PRIMARY]` annotations from leaking into rendered text |
-| **SVG Visualizer** (new) | LLM generates SVG code with explanatory prompts + Cairo rendering + multimodal vision critic loop | 100% text rendering fidelity, self-correcting layout, enforced information density |
-| **Critic** | Added 7 mandatory visual excellence checks with strict pass threshold | Prevents premature "looks good" responses; enforces visual hierarchy, legibility, color harmony |
+The original 5-agent pipeline (all enhanced in this fork) plus the new SVG Visualizer:
 
-### Quality Journey
+| Agent | Enhancement |
+|-------|------------|
+| **Planner** | Mandatory visual metaphor discovery before describing elements |
+| **Stylist** | Preserves metaphors (never flattens into generic boxes) |
+| **Visualizer** | Multi-candidate parallel generation + tag stripping |
+| **Critic** | 7 mandatory visual excellence checks, strict pass threshold |
+| **SVG Visualizer** *(new)* | LLM writes SVG + Cairo render + multimodal vision critic loop |
+
+<details>
+<summary><strong>Quality journey across iterations</strong></summary>
 
 <div align="center">
 <img src="docs/quality_progression.svg" alt="Quality score progression chart" width="700"/>
 </div>
 
-Each iteration built on the one before. The storytelling step (v6) produced the largest single improvement because it changes the *strategy* rather than just the *execution*.
+Each iteration built on the one before. The storytelling step produced the largest single improvement because it changes the *strategy* rather than just the *execution*.
 
-### New Features Added
-
-| Feature | Description |
-|---------|-------------|
-| **`cli_generate.py`** | Headless CLI for scripted/automated diagram generation (no Streamlit required) |
-| **`mcp_server/`** | MCP server for integration with Claude Code and other AI coding assistants |
-| **Multi-candidate generation** | Generate N candidates in parallel, store all for comparison |
-
----
-
-## Original Pipeline Architecture
+</details>
 
 ![PaperBanana Framework](assets/method_diagram.png)
 
-The original 5-agent pipeline (all agents enhanced in this fork):
-
-1. **Retriever** — finds relevant reference diagrams to guide downstream agents
-2. **Planner** — discovers visual metaphors, then describes the diagram *(enhanced: storytelling-first approach)*
-3. **Stylist** — applies NeurIPS-level aesthetic guidelines *(enhanced: preserves metaphors)*
-4. **Visualizer** — generates images via Gemini *(enhanced: multi-candidate parallel generation)*
-5. **Critic** — iterative refinement loop *(enhanced: 7 mandatory visual excellence checks)*
-6. **SVG Visualizer** *(new)* — writes SVG code + Cairo render + vision critic self-correction
-
----
-
 <details>
-<summary><strong>Advanced: Batch Evaluation</strong></summary>
+<summary><strong>Advanced: Batch Evaluation and Visualization</strong></summary>
 
 ```bash
+# Batch evaluation
 python main.py \
   --dataset_name "PaperBananaBench" \
   --task_name "diagram" \
   --split_name "test" \
   --exp_mode "dev_full" \
   --retrieval_setting "auto"
+
+# Pipeline evolution viewer
+streamlit run visualize/show_pipeline_evolution.py
+
+# Evaluation results
+streamlit run visualize/show_referenced_eval.py
 ```
 
 Modes: `vanilla`, `dev_planner`, `dev_planner_stylist`, `dev_planner_critic`, `dev_full`, `demo_planner_critic`, `demo_full`
-
-</details>
-
-<details>
-<summary><strong>Advanced: Visualization Tools</strong></summary>
-
-```bash
-streamlit run visualize/show_pipeline_evolution.py   # Pipeline evolution
-streamlit run visualize/show_referenced_eval.py      # Evaluation results
-```
 
 </details>
 
@@ -415,84 +367,43 @@ streamlit run visualize/show_referenced_eval.py      # Evaluation results
 <summary>ASCII Version (for AI/accessibility)</summary>
 
 ```
-├── agents/
-│   ├── planner_agent.py      # Visual metaphor discovery + description
-│   ├── stylist_agent.py       # Metaphor-preserving style refinement
-│   ├── visualizer_agent.py    # Multi-candidate image generation
-│   ├── svg_visualizer_agent.py # SVG code generation + Cairo render + vision critic loop
-│   ├── critic_agent.py        # 7-check visual excellence scoring
-│   ├── retriever_agent.py     # Reference example retrieval
-│   ├── vanilla_agent.py       # Direct generation (baseline)
-│   └── polish_agent.py        # Post-processing refinement
-├── mcp_server/
-│   └── server.py              # MCP server for AI assistant integration
-├── cli_generate.py            # Headless CLI for single image generation
-├── demo.py                    # Streamlit web UI
-├── main.py                    # Batch evaluation runner
-├── configs/
-│   └── model_config.template.yaml
-├── data/
-│   └── PaperBananaBench/      # Reference dataset (download separately)
-├── docs/
-│   └── comparison/            # Side-by-side comparison images
-├── style_guides/              # NeurIPS aesthetic guidelines
-├── utils/
-│   ├── config.py
-│   ├── paperviz_processor.py  # Main pipeline orchestration
-│   └── ...
-├── visualize/                 # Pipeline visualization tools
-├── ENHANCED_PIPELINE.md       # Detailed enhancement documentation
-└── README.md
+agents/
+  planner_agent.py        # Visual metaphor discovery + description
+  stylist_agent.py         # Metaphor-preserving style refinement
+  visualizer_agent.py      # Multi-candidate image generation
+  svg_visualizer_agent.py  # SVG code gen + Cairo render + vision critic
+  critic_agent.py          # 7-check visual excellence scoring
+  retriever_agent.py       # Reference example retrieval
+  vanilla_agent.py         # Direct generation (baseline)
+  polish_agent.py          # Post-processing refinement
+mcp_server/
+  server.py                # MCP server (4 tools) for AI assistants
+cli_generate.py            # Headless CLI for single diagram generation
+demo.py                    # Streamlit web UI
+main.py                    # Batch evaluation runner
+configs/                   # Model config templates
+data/PaperBananaBench/     # Reference dataset (download separately)
+docs/                      # Comparison images, showcase gallery
+style_guides/              # NeurIPS aesthetic guidelines
+utils/                     # Pipeline orchestration, config
+visualize/                 # Pipeline visualization tools
 ```
 
 </details>
 
-## Key Features
-
-### Multi-Agent Pipeline
-- **Reference-Driven**: Learns from curated examples through generative retrieval
-- **Visual Storytelling**: Planner discovers metaphors that make concepts click instantly
-- **Iterative Refinement**: Critic-Visualizer loop with 7 mandatory quality checks
-- **Style-Aware**: Automatically synthesized aesthetic guidelines ensure academic quality
-- **Flexible Modes**: Multiple experiment modes for different use cases
-
-### Interactive Demo
-- **Parallel Generation**: Generate up to 20 candidate diagrams simultaneously
-- **Pipeline Visualization**: Track the evolution through Planner -> Stylist -> Critic stages
-- **High-Resolution Refinement**: Upscale to 2K/4K using Image Generation APIs
-- **Batch Export**: Download all candidates as PNG or ZIP
-
-### Extensible Design
-- **Modular Agents**: Each agent is independently configurable
-- **Task Support**: Handles both conceptual diagrams and data plots
-- **MCP Server**: Drop-in integration with AI coding assistants
-- **Evaluation Framework**: Built-in evaluation against ground truth with multiple metrics
-- **Async Processing**: Efficient batch processing with configurable concurrency
-
-
-## TODO List
-- [ ] Add support for using manually selected examples. Provide a user-friendly interface.
-- [ ] Upload code for generating statistical plots.
-- [ ] Upload code for improving existing diagrams based on style guideline.
-- [ ] Expand the reference set to support more areas beyond computer science.
-- [ ] OCR post-processing to verify text rendering quality after generation
-- [ ] Automated best-pick selection using VLM judge across multi-candidates
-
+---
 
 ## Community Supports
 
-> **Note:** The community projects below are **independent implementations** of the original PaperBanana paper. They are not related to the Skill or MCP server in this fork. If you installed our Skill or MCP from the [Use It Now](#use-it-now-no-install-required) section above, you're using this fork's SVG pipeline — not these.
+> **Note:** The community projects below are **independent implementations** of the original PaperBanana paper -- not related to the Skill or MCP in this fork. If you installed from [Quick Start](#option-a-claude-code-skill-recommended--no-install-needed) above, you're using this fork's SVG pipeline.
 
-Around the release of this repo, we noticed several community efforts to reproduce this work. These efforts introduce unique perspectives that we find incredibly valuable. We highly recommend checking out these excellent contributions: (welcome to add if we missed something):
-- https://github.com/llmsresearch/paperbanana — pip-installable package with its own MCP server (different from this fork's MCP)
+- https://github.com/llmsresearch/paperbanana -- pip-installable package with its own MCP server (different from this fork's MCP)
 - https://github.com/efradeca/freepaperbanana
 
-Additionally, alongside the development of this method, many other works have been exploring the same topic of automated academic illustration generation—some even enabling editable generated figures. Their contributions are essential to the ecosystem and are well worth your attention (likewise, welcome to add):
+Related work in automated academic illustration:
 - https://github.com/ResearAI/AutoFigure-Edit
 - https://github.com/OpenDCAI/Paper2Any
 - https://github.com/BIT-DataLab/Edit-Banana
-
-Overall, we are encouraged that the fundamental capabilities of current models have brought us much closer to solving the problem of automated academic illustration generation. With the community's continued efforts, we believe that in the near future we will have high-quality automated drawing tools to accelerate academic research iteration and visual communication.
 
 We warmly welcome community contributions to make PaperBanana even better!
 
@@ -500,7 +411,6 @@ We warmly welcome community contributions to make PaperBanana even better!
 Apache-2.0
 
 ## Citation
-If you find this repo helpful, please cite our paper as follows:
 ```bibtex
 @article{zhu2026paperbanana,
   title={PaperBanana: Automating Academic Illustration for AI Scientists},
