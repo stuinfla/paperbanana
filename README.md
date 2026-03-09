@@ -24,10 +24,10 @@ This fork takes their pipeline and makes it **faster, cheaper, and more visually
 
 | | Original | This Fork |
 |---|---|---|
-| **Rendering** | Raster image generation (Gemini) | SVG code + Cairo render (100% text accuracy) |
-| **Speed** | 2-5 minutes per diagram | ~30 seconds (10x faster) |
-| **Cost** | $0.50-2.00 per diagram | ~$0.05 (20x cheaper) |
-| **Quality** | ~72/100 average | **95.8/100 average** (+34 points) |
+| **Rendering** | Raster image generation (Gemini) | SVG code + Cairo render (100% text rendering fidelity) |
+| **Speed** | 2-5 minutes per diagram | ~30 seconds in SVG mode (10x faster) |
+| **Cost** | $0.50-2.00 per diagram | ~$0.05 in SVG mode (20x cheaper) |
+| **Quality** | ~62-72/100 average | **95.8/100 average** (self-evaluated via vision critic) |
 | **Design philosophy** | Labeled boxes and arrows | Visual-first: icons, shapes, spatial layout with short labels |
 | **Self-correction** | Text-based critic feedback | Vision critic sees the rendered PNG, sends spatial fixes |
 | **Output format** | Raster PNG only | Editable SVG + PNG (version-controllable, diffable) |
@@ -61,7 +61,7 @@ git clone https://github.com/stuinfla/paperbanana && cd paperbanana && python3 -
 
 ```bash
 mkdir -p ~/.claude/skills/paperbanana
-curl -sL https://raw.githubusercontent.com/stuinfla/paperbanana/feature/enhanced-pipeline/docs/SKILL.md > ~/.claude/skills/paperbanana/SKILL.md
+curl -sL https://raw.githubusercontent.com/stuinfla/paperbanana/main/docs/SKILL.md > ~/.claude/skills/paperbanana/SKILL.md
 ```
 
 Then type `/paperbanana` in Claude Code. Done.
@@ -300,7 +300,7 @@ The SVG pipeline is the highest-quality rendering mode. Instead of generating ra
 **How it works:**
 
 1. **SVG Generation**: LLM writes SVG code with enforced rules — every element has a label AND description, no emoji, no unicode arrows, 20px minimum text spacing
-2. **Cairo Rendering**: `cairosvg` renders SVG to PNG with 100% text accuracy (text is placed by the renderer, not predicted by a neural net)
+2. **Cairo Rendering**: `cairosvg` renders SVG to PNG with 100% text rendering fidelity (text is placed by the renderer, not predicted by a neural net)
 3. **Vision Critique**: Rendered PNG is sent to multimodal Gemini which evaluates for text overlap, clipping, layout issues, missing information
 4. **Self-Correction**: Critic's spatial fixes are applied to the SVG code, re-rendered, and re-evaluated until the diagram scores 95+
 
@@ -328,7 +328,7 @@ These changes work within the existing pipeline architecture. No new agents, no 
 | **Planner** | Added mandatory visual metaphor discovery step before element description | The metaphor becomes the diagram's backbone — every element reinforces a single coherent analogy |
 | **Stylist** | Added rule to preserve and enhance metaphors (never flatten into generic boxes) + rendering artifact removal | Previous behavior could strip away the Planner's metaphor during style refinement |
 | **Visualizer** | Added multi-candidate parallel generation + tag stripping + 9-rule quality prompt | More candidates = better selection; tag stripping prevents `[PRIMARY]` annotations from leaking into rendered text |
-| **SVG Visualizer** (new) | LLM generates SVG code with explanatory prompts + Cairo rendering + multimodal vision critic loop | 100% text accuracy, self-correcting layout, enforced information density |
+| **SVG Visualizer** (new) | LLM generates SVG code with explanatory prompts + Cairo rendering + multimodal vision critic loop | 100% text rendering fidelity, self-correcting layout, enforced information density |
 | **Critic** | Added 7 mandatory visual excellence checks with strict pass threshold | Prevents premature "looks good" responses; enforces visual hierarchy, legibility, color harmony |
 
 ### Quality Journey
