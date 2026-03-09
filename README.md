@@ -47,7 +47,7 @@ This fork takes their pipeline and makes it **faster, cheaper, and more visually
 
 ## Use It Now (No Install Required)
 
-The fastest way to start generating diagrams — no cloning, no setup:
+The fastest way to start generating diagrams from **this fork** (SVG pipeline + visual storytelling). These are different from the community `pip install paperbanana` package listed below — ours include the SVG pipeline, vision critic, and visual-first design.
 
 ### Claude Code Skill (Recommended — 2 commands)
 
@@ -470,8 +470,11 @@ streamlit run visualize/show_referenced_eval.py      # Evaluation results
 
 
 ## Community Supports
+
+> **Note:** The community projects below are **independent implementations** of the original PaperBanana paper. They are not related to the Skill or MCP server in this fork. If you installed our Skill or MCP from the [Use It Now](#use-it-now-no-install-required) section above, you're using this fork's SVG pipeline — not these.
+
 Around the release of this repo, we noticed several community efforts to reproduce this work. These efforts introduce unique perspectives that we find incredibly valuable. We highly recommend checking out these excellent contributions: (welcome to add if we missed something):
-- https://github.com/llmsresearch/paperbanana
+- https://github.com/llmsresearch/paperbanana — pip-installable package with its own MCP server (different from this fork's MCP)
 - https://github.com/efradeca/freepaperbanana
 
 Additionally, alongside the development of this method, many other works have been exploring the same topic of automated academic illustration generation—some even enabling editable generated figures. Their contributions are essential to the ecosystem and are well worth your attention (likewise, welcome to add):
