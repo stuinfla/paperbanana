@@ -45,30 +45,22 @@ This fork takes their pipeline and makes it **faster, cheaper, and more visually
 
 ---
 
-## Quick Start
+## Use It Now (No Install Required)
 
-**Step 1: Get a Gemini API key** (free) at [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+The fastest way to start generating diagrams — no cloning, no setup:
 
-**Step 2: Install** (one command)
-
-```bash
-git clone https://github.com/stuinfla/paperbanana && cd paperbanana && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && export GOOGLE_API_KEY="your-key-here"
-```
-
-**Step 3: Pick how you want to use it** — choose one:
-
-### Option A: Claude Code Skill (2 commands, no clone needed)
+### Claude Code Skill (Recommended — 2 commands)
 
 ```bash
 mkdir -p ~/.claude/skills/paperbanana
 curl -sL https://raw.githubusercontent.com/stuinfla/paperbanana/main/docs/SKILL.md > ~/.claude/skills/paperbanana/SKILL.md
 ```
 
-Then type `/paperbanana` in Claude Code. Done.
+Type `/paperbanana` in Claude Code. That's it — start describing diagrams.
 
-### Option B: MCP Server (for Claude Code / AI assistants)
+### MCP Server (for Claude Code / AI assistants)
 
-After cloning (Step 2), add to your project's `.mcp.json`:
+Add to any project's `.mcp.json` — Claude can then generate diagrams conversationally:
 
 ```json
 {
@@ -83,9 +75,22 @@ After cloning (Step 2), add to your project's `.mcp.json`:
 }
 ```
 
-Then just ask Claude: *"Generate a diagram showing how neural networks learn through backpropagation"*
+Get a free API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), then ask Claude: *"Generate a diagram showing how neural networks learn through backpropagation"*
 
-### Option C: Command Line
+> **Note:** The MCP server requires cloning the repo first (see [Full Install](#full-install) below).
+
+---
+
+## Full Install
+
+For CLI, Streamlit, Python API, or MCP server — clone and set up:
+
+```bash
+git clone https://github.com/stuinfla/paperbanana && cd paperbanana && python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+export GOOGLE_API_KEY="your-key-here"  # Free at https://aistudio.google.com/apikey
+```
+
+### Command Line
 
 ```bash
 # Generate a diagram
@@ -108,13 +113,13 @@ Then just ask Claude: *"Generate a diagram showing how neural networks learn thr
   --candidates 5
 ```
 
-### Option D: Web UI (Streamlit)
+### Web UI (Streamlit)
 
 ```bash
 .venv/bin/streamlit run demo.py
 ```
 
-### Option E: Python API
+### Python API
 
 <details>
 <summary>Show Python code</summary>
