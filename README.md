@@ -45,39 +45,40 @@ This fork takes their pipeline and makes it **faster, cheaper, and more visually
 
 ---
 
-## Use It Now (No Install Required)
-
-The fastest way to start generating diagrams from **this fork** (SVG pipeline + visual storytelling). These are different from the community `pip install paperbanana` package listed below — ours include the SVG pipeline, vision critic, and visual-first design.
-
-### Claude Code Skill (Recommended — 2 commands)
-
-```bash
-mkdir -p ~/.claude/skills/paperbanana
-curl -sL https://raw.githubusercontent.com/stuinfla/paperbanana/main/docs/SKILL.md > ~/.claude/skills/paperbanana/SKILL.md
-```
-
-Type `/paperbanana` in Claude Code. That's it — start describing diagrams.
-
-### MCP Server (for Claude Code / AI assistants)
-
-Add to any project's `.mcp.json` — Claude can then generate diagrams conversationally:
-
-```json
-{
-  "mcpServers": {
-    "paperbanana": {
-      "command": "python3",
-      "args": ["-m", "mcp_server.server"],
-      "cwd": "/path/to/paperbanana",
-      "env": { "GOOGLE_API_KEY": "your-key-here" }
-    }
-  }
-}
-```
-
-Get a free API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), then ask Claude: *"Generate a diagram showing how neural networks learn through backpropagation"*
-
-> **Note:** The MCP server requires cloning the repo first (see [Full Install](#full-install) below).
+> [!TIP]
+> ## Quick Start — Generate Diagrams in 60 Seconds
+>
+> **Option A: Claude Code Skill** (no clone needed — just 2 commands)
+> ```bash
+> mkdir -p ~/.claude/skills/paperbanana
+> curl -sL https://raw.githubusercontent.com/stuinfla/paperbanana/main/docs/SKILL.md > ~/.claude/skills/paperbanana/SKILL.md
+> ```
+> Then type **`/paperbanana`** in Claude Code and describe what you want.
+>
+> **Option B: MCP Server** (clone repo, then paste into `.mcp.json`)
+> ```json
+> {
+>   "mcpServers": {
+>     "paperbanana": {
+>       "command": "python3",
+>       "args": ["-m", "mcp_server.server"],
+>       "cwd": "/path/to/paperbanana",
+>       "env": { "GOOGLE_API_KEY": "your-key-here" }
+>     }
+>   }
+> }
+> ```
+> Get a free API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey), then ask Claude: *"Generate a diagram showing how neural networks learn"*
+>
+> **Option C: Command Line** (clone repo, then run)
+> ```bash
+> git clone https://github.com/stuinfla/paperbanana && cd paperbanana
+> python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+> export GOOGLE_API_KEY="your-key"
+> .venv/bin/python cli_generate.py --content "Your concept" --caption "Figure 1" --output diagram.png
+> ```
+>
+> These are **this fork's tools** (SVG pipeline + visual storytelling). Different from the community `pip install paperbanana` package — see [Community Supports](#community-supports) below.
 
 ---
 
